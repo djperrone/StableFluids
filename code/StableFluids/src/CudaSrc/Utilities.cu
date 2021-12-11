@@ -1,14 +1,12 @@
 #include "utilities.cuh"
 #include "Fluid.cuh"
 #include <math.h>
-#include <stdio.h>
+
 
 namespace StableFluidsCuda {
 
 	__device__ void set_corner_gpu(float* x, int N)
 	{
-		//printf(__FUNCTION__);
-
 		x[IX(0, 0)] = 0.5 * (x[IX(1, 0)] + x[IX(0, 1)]);
 		x[IX(0, N - 1)] = 0.5 * (x[IX(1, N - 1)] + x[IX(0, N - 2)]);
 		x[IX(N - 1, 0)] = 0.5 * (x[IX(N - 2, 0)] + x[IX(N - 1, 1)]);
@@ -22,8 +20,6 @@ namespace StableFluidsCuda {
 		}
 
 		if (tid < 1 || tid >= N - 1) return;
-		//printf(__FUNCTION__);
-
 
 		x[IX(tid, 0)] = b == 2 ? -x[IX(tid, 1)] : x[IX(tid, 1)];
 		x[IX(tid, N - 1)] = b == 2 ? -x[IX(tid, N - 2)] : x[IX(tid, N - 2)];
@@ -31,8 +27,6 @@ namespace StableFluidsCuda {
 		x[IX(N - 1, tid)] = b == 1 ? -x[IX(N - 2, tid)] : x[IX(N - 2, tid)];
 	}
 
-	// diffuse call: b, x(Vx0), x0(Vx), a, 1 + 6 * a, iter, N, tid
-	// project call: 0, p, div, 1, 6, iter, N, tid
 	__device__ void lin_solve_gpu(int b, float* x, float* x0, float a, float c, int iter, int N, int tid)
 	{
 		// check this if it doesnt work
@@ -41,7 +35,6 @@ namespace StableFluidsCuda {
 
 		if (i < 1 || i > N - 2) return;
 		if (j < 1 || j > N - 2) return;
-		//printf(__FUNCTION__);
 
 		float cRecip = 1.0 / c;
 		for (int k = 0; k < iter; k++) {
@@ -57,26 +50,19 @@ namespace StableFluidsCuda {
 		}
 	}
 
-	// 1, Vx0, Vx, visc, dt, 4, N
-	__global__ void diffuse_gpu(int b, float* x, float* x0, int iter, FluidData* data)
+	__global__ void diffuse_gpu(int b, float* x, float* x0, float diff, float dt, int iter, int N)
 	{
 		int tid = threadIdx.x + blockIdx.x * blockDim.x;
-		int N = data->size;
 		if (tid >= N * N) return;
-		//printf("N: %i\n", N);
 
-		float a = data->dt * data->diff * (N - 2) * (N - 2);
+		float a = dt * diff * (N - 2) * (N - 2);
 		lin_solve_gpu(b, x, x0, a, 1 + 6 * a, iter, N, tid);
 	}
 
-	// Vx0, Vy0, Vx, Vy, 4, N
-	__global__ void project_gpu(float* velocX, float* velocY, float* p, float* div, int iter, FluidData* data)
+	__global__ void project_gpu(float* velocX, float* velocY, float* p, float* div, int iter, int N)
 	{
 		int tid = threadIdx.x + blockIdx.x * blockDim.x;
-		int N = data->size;
-
 		if (tid >= N * N) return;
-		//printf(__FUNCTION__);
 
 		int i = tid % N;
 		int j = tid / N;
@@ -107,25 +93,21 @@ namespace StableFluidsCuda {
 		set_bnd_gpu(2, velocY, N, tid);
 	}
 
-	//1, Vx, Vx0, Vx0, Vy0, dt, N
-	__global__ void advect_gpu(int b, float* d, float* d0, float* velocX, float* velocY, FluidData* data)
+	__global__ void advect_gpu(int b, float* d, float* d0, float* velocX, float* velocY, float dt, int N)
 	{
 		int tid = threadIdx.x + blockIdx.x * blockDim.x;
-		int N = data->size;
-
 		if (tid >= N * N) return;
 
 		int i = tid % N;
 		int j = tid / N;
-		//printf(__FUNCTION__);
 
 		if (i < 1 || i > N - 2) return;
 		if (j < 1 || j > N - 2) return;
 
 		float i0, i1, j0, j1;
 
-		float dtx = data->dt * (N - 2);
-		float dty = data->dt * (N - 2);
+		float dtx = dt * (N - 2);
+		float dty = dt * (N - 2);
 
 		float s0, s1, t0, t1;
 		float tmp1, tmp2, x, y;
@@ -162,6 +144,6 @@ namespace StableFluidsCuda {
 			s0 * (t0 * d0[IX(i0i, j0i)] + t1 * d0[IX(i0i, j1i)])
 			+ s1 * (t0 * d0[IX(i1i, j0i)] + t1 * d0[IX(i1i, j1i)]);
 
-		set_bnd_gpu(b, d, N,tid);
+		set_bnd_gpu(b, d, N, tid);
 	}
 }

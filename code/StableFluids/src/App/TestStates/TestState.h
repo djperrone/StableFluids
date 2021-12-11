@@ -6,7 +6,7 @@
 
 #include "Novaura/Core/Window.h"
 
-namespace ParticleSimulation {
+namespace Simulation {
 
 
 

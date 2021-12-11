@@ -1,9 +1,9 @@
 #include "sapch.h"
 #include "Actor.h"
 
-namespace ParticleSimulation {
+namespace Simulation {
 
-	Bounds ParticleSimulation::Actor::GetBounds() const
+	Bounds Simulation::Actor::GetBounds() const
 	{
 		Bounds bounds;
 		bounds.BottomLeft = { m_Rect->GetPosition().x - m_Rect->GetScale().x * 0.5f, m_Rect->GetPosition().y - m_Rect->GetScale().y * 0.5f };

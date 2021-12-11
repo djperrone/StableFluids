@@ -10,7 +10,7 @@
 #include "Novaura/Renderer/TextureLoader.h"
 #include "Novaura/Input/InputHandler.h"
 
-namespace ParticleSimulation {	
+namespace Simulation {	
 
 	TestState::TestState(std::shared_ptr<Novaura::Window> window, std::shared_ptr<Novaura::CameraController> cameraController, std::shared_ptr<Novaura::StateMachine> stateMachine)
 	{

@@ -1,7 +1,7 @@
 #include "sapch.h"
 #include "StateInfo.h"
 
-namespace ParticleSimulation {
+namespace Simulation {
 
 	//bool StateInfo::PAUSE = false;
 	//bool StateInfo::PLAY = false;

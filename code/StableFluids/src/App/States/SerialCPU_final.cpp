@@ -7,7 +7,7 @@
 #include "Novaura/Core/Application.h"
 #include "Novaura/Random.h"
 
-namespace ParticleSimulation {
+namespace Simulation {
 	
 
 	SerialCPU_final::SerialCPU_final()

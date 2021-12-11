@@ -2,7 +2,7 @@
 #include "Actor.h"
 #include <glm/glm.hpp>
 
-namespace ParticleSimulation {
+namespace Simulation {
 
 	enum class ButtonType
 	{

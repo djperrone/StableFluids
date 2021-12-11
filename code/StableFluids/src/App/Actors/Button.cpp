@@ -3,7 +3,7 @@
 #include "Novaura/Input/InputHandler.h"
 #include <spdlog/spdlog.h>
 
-namespace ParticleSimulation {
+namespace Simulation {
 
 	Button::Button(std::string_view fileName, ButtonType type, const glm::vec2& position, const glm::vec2& scale)
 		: m_ButtonType(type)

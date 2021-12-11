@@ -44,17 +44,9 @@ namespace Novaura {
 
 		static void RegisterCudaGLDevice();
 		static void OnReset(unsigned int amount);
-		static void InitInteropInstancedCircles_glm(unsigned int amount, float scale, const glm::vec4& color);	
-		
+		static void InitInteropInstancedCircles_glm(unsigned int amount, float scale, const glm::vec4& color);			
 
-
-
-		static void EndInteropInstancedCircles();
-		
-
-
-
-		
+		static void EndInteropInstancedCircles();		
 
 	};
 }

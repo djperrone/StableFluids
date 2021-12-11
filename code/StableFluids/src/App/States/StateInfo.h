@@ -1,6 +1,5 @@
 #pragma once
-namespace ParticleSimulation
-{
+namespace Simulation {
 	struct StateInfo
 	{
 		bool RESET = false;

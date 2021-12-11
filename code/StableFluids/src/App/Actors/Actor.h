@@ -2,7 +2,7 @@
 
 #include "Novaura/Primitives/Rectangle.h"
 
-namespace ParticleSimulation {
+namespace Simulation {
 
 	struct Bounds
 	{

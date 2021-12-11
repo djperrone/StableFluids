@@ -79,7 +79,7 @@ namespace Pgui {
         ImGui::End();
     }
 
-    void Gui::DrawStateButtons(ParticleSimulation::StateInfo& stateInfo, float& pscale)
+    void Gui::DrawStateButtons(Simulation::StateInfo& stateInfo, float& pscale)
     {
       
 
@@ -133,7 +133,7 @@ namespace Pgui {
         ImGui::End();
     }
 
-    void Gui::DrawDockSpace(ParticleSimulation::StateInfo& stateInfo)
+    void Gui::DrawDockSpace(Simulation::StateInfo& stateInfo)
     {
         static bool dockspaceOpen = true;
         static bool opt_fullscreen = true;

@@ -15,8 +15,8 @@ namespace Pgui {
 		~Gui();
 
 		void Draw();		
-		void DrawStateButtons(ParticleSimulation::StateInfo& stateInfo, float& pscale);
-		void DrawDockSpace(ParticleSimulation::StateInfo& stateInfo);
+		void DrawStateButtons(Simulation::StateInfo& stateInfo, float& pscale);
+		void DrawDockSpace(Simulation::StateInfo& stateInfo);
 
 		void BeginFrame();
 		void EndFrame();

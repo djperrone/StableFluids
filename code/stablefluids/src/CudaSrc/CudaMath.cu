@@ -4,9 +4,7 @@
 #define NUM_THREADS 256
 #define NUM_PARTICLES 1000
 
-namespace CudaMath {	
-
-	
+namespace CudaMath {		
 
 	void CudaMath::MatMul44_cpu(Matrix44f* A, Matrix44f* B, Matrix44f* C, int N)
 	{		
