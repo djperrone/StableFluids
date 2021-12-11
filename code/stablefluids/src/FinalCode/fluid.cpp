@@ -10,19 +10,19 @@ namespace StableFluids {
         FluidSquare* sq = (FluidSquare*)malloc(sizeof(FluidSquare));
         int N = size;
 
-        sq->size = size;
+        sq->size = sqrt(size);
         sq->dt = dt;
         sq->diff = diffusion;
         sq->visc = viscosity;
 
-        sq->density0 = (float*)calloc(N * N, sizeof(float));
-        sq->density = (float*)calloc(N * N, sizeof(float));
+        sq->density0 = (float*)calloc(N , sizeof(float));
+        sq->density = (float*)calloc(N, sizeof(float));
 
-        sq->Vx = (float*)calloc(N * N, sizeof(float));
-        sq->Vy = (float*)calloc(N * N, sizeof(float));
+        sq->Vx = (float*)calloc(N , sizeof(float));
+        sq->Vy = (float*)calloc(N , sizeof(float));
 
-        sq->Vx0 = (float*)calloc(N * N, sizeof(float));
-        sq->Vy0 = (float*)calloc(N * N, sizeof(float));
+        sq->Vx0 = (float*)calloc(N , sizeof(float));
+        sq->Vy0 = (float*)calloc(N , sizeof(float));
 
         return sq;
     }

@@ -34,7 +34,7 @@ namespace StableFluidsCuda {
 
     void FluidSquareCreate(FluidSquare* sq, int size, float diffusion, float viscosity, float dt);
     void FluidSquareCreate_cpu(FluidSquare* sq, int size, float diffusion, float viscosity, float dt);
-    void CopyToCPU(FluidSquare* sq_cpu, FluidSquare* sq_gpu, int N);
+    void CopyToCPU(FluidSquare sq_cpu, FluidSquare sq_gpu, int N);
 
     void FluidSquareFree(FluidSquare* sq);
     void FluidSquareFree_cpu(FluidSquare* sq);
@@ -44,7 +44,7 @@ namespace StableFluidsCuda {
     // device, global ??....
     __global__ void FluidSquareAddDensity_gpu(float* density, int x, int y, float amount, int N);
     __global__ void FluidSquareAddVelocity_gpu(float*velocityX, float* velocityY, int x, int y, float amountX, float amountY, int N);
-    void FluidSquareAddDensity(FluidSquare* sq, int x, int y, float amount);
+    void FluidSquareAddDensity(FluidSquare sq, int x, int y, float amount);
     void FluidSquareAddVelocity(FluidSquare* sq, int x, int y, float amountX, float amountY);
 
 }

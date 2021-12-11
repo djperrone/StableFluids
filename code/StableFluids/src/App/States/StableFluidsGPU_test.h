@@ -45,11 +45,15 @@ namespace Simulation {
 		// final
 		StableFluidsCuda::FluidSquare sq;
 		StableFluidsCuda::FluidSquare sq_cpu;
+		StableFluids::FluidSquare* sq_test;
+
 
 		int n = 2000;
 		float d = 0;
 		float v = .00001;
 		float dt = .005;
 		int n_per_side;
+
+		void CompareResults();
 	};
 }
