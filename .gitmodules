@@ -1,0 +1,9 @@
+[submodule "code/stablefluids/vendor/glfw"]
+	path = code/stablefluids/vendor/glfw
+	url = https://github.com/djperrone/glfw.git
+[submodule "code/stablefluids/vendor/glm"]
+	path = code/stablefluids/vendor/glm
+	url = https://github.com/djperrone/glm.git
+[submodule "code/stablefluids/vendor/spdlog"]
+	path = code/stablefluids/vendor/spdlog
+	url = https://github.com/djperrone/spdlog.git
