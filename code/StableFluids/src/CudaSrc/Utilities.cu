@@ -33,6 +33,8 @@ namespace StableFluidsCuda {
 		int i = tid % N;
 		int j = tid / N;
 
+		__shared__ float local_velocity[NUM_THREADS];
+
 		if (i < 1 || i > N - 2) return;
 		if (j < 1 || j > N - 2) return;
 
@@ -45,8 +47,10 @@ namespace StableFluidsCuda {
 						+ x[IX(i, j + 1)]
 						+ x[IX(i, j - 1)]
 						)) * cRecip;
-
+			__syncthreads();
 			set_bnd_gpu(b, x, N, tid);
+			__syncthreads();
+
 		}
 	}
 
@@ -78,19 +82,30 @@ namespace StableFluidsCuda {
 			- velocY[IX(i, j - 1)]
 			) / N;
 		p[IX(i, j)] = 0;
+		__syncthreads();
 
 		set_bnd_gpu(0, div, N, tid);
+		__syncthreads();
+
 		set_bnd_gpu(0, p, N, tid);
+		__syncthreads();
+
 		lin_solve_gpu(0, p, div, 1, 6, iter, N, tid);
+		__syncthreads();
 
 
 		velocX[IX(i, j)] -= 0.5f * (p[IX(i + 1, j)]
 			- p[IX(i - 1, j)]) * N;
 		velocY[IX(i, j)] -= 0.5f * (p[IX(i, j + 1)]
 			- p[IX(i, j - 1)]) * N;
+		__syncthreads();
 
 		set_bnd_gpu(1, velocX, N, tid);
+		__syncthreads();
+
 		set_bnd_gpu(2, velocY, N, tid);
+		__syncthreads();
+
 	}
 
 	__global__ void advect_gpu(int b, float* d, float* d0, float* velocX, float* velocY, float dt, int N)
@@ -143,7 +158,10 @@ namespace StableFluidsCuda {
 		d[tid] =
 			s0 * (t0 * d0[IX(i0i, j0i)] + t1 * d0[IX(i0i, j1i)])
 			+ s1 * (t0 * d0[IX(i1i, j0i)] + t1 * d0[IX(i1i, j1i)]);
+		__syncthreads();
 
 		set_bnd_gpu(b, d, N, tid);
+		__syncthreads();
+
 	}
 }

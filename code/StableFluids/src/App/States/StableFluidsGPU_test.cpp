@@ -36,48 +36,23 @@ namespace Simulation {
 		spdlog::info(__FUNCTION__);
 		n_per_side = (int)sqrt(n);
 
-		StableFluidsCuda::FluidSquareCreate(&sq, n, d, v, dt);
-		StableFluidsCuda::FluidSquareCreate_cpu(&sq_cpu, n, d, v, dt);
-
-		sq_test = StableFluids::FluidSquareCreate(n, d, v, dt);
-		StableFluids::FluidSquareAddDensity(sq_test, n_per_side / 2, n_per_side / 2, 50);
-		//StableFluids::FluidSquareAddVelocity(sq_test, n_per_side / 2, n_per_side / 2, 3, 3);
-
-
-		StableFluidsCuda::FluidSquareAddDensity(sq, n_per_side / 2, n_per_side / 2, 50);
-		//StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, 3, 3);
-
-		StableFluidsCuda::CopyToCPU(sq_cpu, sq, n);
-		CompareResults();
-
-		//n_per_side = (int)sqrt(n);
-
-		/*StableFluidsCuda::FluidSquareCreate(&sq, n_per_side, d, v, dt);		
-
+		StableFluidsCuda::FluidSquareCreate(&sq, n_per_side, d, v, dt);
 		StableFluidsCuda::FluidSquareCreate_cpu(&sq_cpu, n_per_side, d, v, dt);
 
 		sq_test = StableFluids::FluidSquareCreate(n_per_side, d, v, dt);
-
-		StableFluidsCuda::CopyToCPU(&sq_cpu, &sq, sq.data.size);
-		CompareResults();
-
-
-		spdlog::info("success");
 		StableFluids::FluidSquareAddDensity(sq_test, n_per_side / 2, n_per_side / 2, 50);
 		StableFluids::FluidSquareAddVelocity(sq_test, n_per_side / 2, n_per_side / 2, 3, 3);
 
-		StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, 50);		
-		StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, 3, 3);*/
 
-	/*	StableFluidsCuda::CopyToCPU(&sq_cpu, &sq, sq_cpu.data.size);
-		CompareResults();*/
+		StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, 50);
+		StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, 3, 3);
 
-		//int N = n_per_side;
-		//spdlog::info("density on enter: {}", sq_cpu.density[IX(n_per_side / 2, n_per_side / 2)]);
+		StableFluidsCuda::CopyToCPU(sq_cpu, sq, n_per_side);
+		CompareResults();
+		
 		m_StateInfo.PAUSE = true;
 		m_StateInfo.PLAY = false;
 		m_StateInfo.RESET = false;
-		spdlog::info("exiting on enter");
 	}
 
 	void StableFluidsGPU_test::HandleInput()
@@ -94,17 +69,20 @@ namespace Simulation {
 		m_CameraController->Update(*Novaura::InputHandler::GetCurrentWindow(), deltaTime);
 		if (!m_StateInfo.PAUSE)
 		{
-			//FluidSquareStep(&sq);
+
+			FluidSquareStep(&sq);
 			StableFluids::FluidSquareStep(sq_test);
+			
 			float addDensity = 5.0f;
 			float addVelocityx = glm::sin(glfwGetTime()) * Novaura::Random::Float(-0.2f, 0.2f);
 			float addVelocityy = -glm::sin(glfwGetTime());
 			StableFluids::FluidSquareAddDensity(sq_test, n_per_side / 2, n_per_side / 2, addDensity);
 			StableFluids::FluidSquareAddVelocity(sq_test, n_per_side / 2, n_per_side / 2, addVelocityx, addVelocityy);
-			//StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, addDensity);
-			////StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, addVelocityx, addVelocityy);
-			//StableFluidsCuda::CopyToCPU(&sq_cpu, &sq, n);
-			//CompareResults()
+			StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, addDensity);
+			StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, addVelocityx, addVelocityy);
+			StableFluidsCuda::CopyToCPU(sq_cpu, sq, n_per_side);
+			CompareResults();
+			counter++;
 	
 			//CompareResults();
 			//spdlog::info("after compare update");
@@ -172,10 +150,11 @@ namespace Simulation {
 
 	void StableFluidsGPU_test::CompareResults()
 	{
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < n_per_side* n_per_side; i++)
 		{
 			if (sq_test->density[i] != sq_cpu.density[i])
 			{
+				spdlog::info("counter: {}", counter);
 				spdlog::info("density not equal at {}", i);
 				spdlog::info("cpu density : {:03.2f}, gpu density: {:03.2f}", sq_test->density[i], sq_cpu.density[i]);
 
@@ -184,6 +163,8 @@ namespace Simulation {
 
 			if (sq_test->density0[i] != sq_cpu.density0[i])
 			{
+				spdlog::info("counter: {}", counter);
+
 				spdlog::info("density not equal at {}", i);
 				exit(-1);
 			}
@@ -191,6 +172,7 @@ namespace Simulation {
 			if (sq_test->Vx[i] != sq_cpu.Vx[i])
 			{
 				spdlog::info("Vx not equal at {}", i);
+				spdlog::info("counter: {}", counter);
 				exit(-1);
 			}
 
@@ -198,6 +180,7 @@ namespace Simulation {
 			{
 				spdlog::info("Vx0 not equal at {}", i);
 				spdlog::info("cpu: {}, gpu: {}",sq_test->Vx0[i], sq_cpu.Vx0[i]);
+				spdlog::info("counter: {}", counter);
 				exit(-1);
 			}
 
@@ -205,6 +188,7 @@ namespace Simulation {
 			{
 				spdlog::info("Vy not equal at {}", i);
 
+				spdlog::info("counter: {}", counter);
 				exit(-1);
 			}
 
@@ -213,6 +197,7 @@ namespace Simulation {
 				spdlog::info("Vy0 not equal at {}", i);
 				spdlog::info("cpu: {}, gpu: {}", sq_test->Vy0[i], sq_cpu.Vy0[i]);
 
+				spdlog::info("counter: {}", counter);
 				exit(-1);
 			}
 

@@ -10,19 +10,19 @@ namespace StableFluids {
         FluidSquare* sq = (FluidSquare*)malloc(sizeof(FluidSquare));
         int N = size;
 
-        sq->size = sqrt(size);
+        sq->size = size;
         sq->dt = dt;
         sq->diff = diffusion;
         sq->visc = viscosity;
 
-        sq->density0 = (float*)calloc(N , sizeof(float));
-        sq->density = (float*)calloc(N, sizeof(float));
+        sq->density0 = (float*)calloc(N * N , sizeof(float));
+        sq->density = (float*)calloc(N * N, sizeof(float));
 
-        sq->Vx = (float*)calloc(N , sizeof(float));
-        sq->Vy = (float*)calloc(N , sizeof(float));
+        sq->Vx = (float*)calloc(N * N , sizeof(float));
+        sq->Vy = (float*)calloc(N  * N, sizeof(float));
 
-        sq->Vx0 = (float*)calloc(N , sizeof(float));
-        sq->Vy0 = (float*)calloc(N , sizeof(float));
+        sq->Vx0 = (float*)calloc(N * N , sizeof(float));
+        sq->Vy0 = (float*)calloc(N * N , sizeof(float));
 
         return sq;
     }
@@ -77,7 +77,7 @@ namespace StableFluids {
         float* density = sq->density;
 
         diffuse(1, Vx0, Vx, visc, dt, 4, N);
-        diffuse(2, Vy0, Vy, visc, dt, 4, N);
+      /*  diffuse(2, Vy0, Vy, visc, dt, 4, N);
 
         project(Vx0, Vy0, Vx, Vy, 4, N);
 
@@ -87,6 +87,6 @@ namespace StableFluids {
         project(Vx, Vy, Vx0, Vy0, 4, N);
 
         diffuse(0, density0, density, diff, dt, 4, N);
-        advect(0, density, density0, Vx, Vy, dt, N);
+        advect(0, density, density0, Vx, Vy, dt, N);*/
     }
 }

@@ -35,7 +35,7 @@ namespace Simulation {
 				
 		n_per_side = (int)sqrt(n);
 		
-		sq = StableFluids::FluidSquareCreate(n, d, v, dt);
+		sq = StableFluids::FluidSquareCreate(n_per_side, d, v, dt);
 
 		StableFluids::FluidSquareAddDensity(sq, n_per_side / 2, n_per_side / 2, 50);
 		StableFluids::FluidSquareAddVelocity(sq, n_per_side / 2, n_per_side / 2, 3, 3);		

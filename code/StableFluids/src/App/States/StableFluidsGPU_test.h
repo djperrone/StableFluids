@@ -38,7 +38,7 @@ namespace Simulation {
 		float particleScale = 0.03f;
 
 		StateInfo m_StateInfo;
-
+		int counter = 0;
 
 		std::unique_ptr<Pgui::Gui> m_Gui;
 

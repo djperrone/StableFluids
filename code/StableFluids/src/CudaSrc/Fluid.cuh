@@ -1,11 +1,11 @@
 #pragma once
 #include "CUDA_KERNEL.h"
 
-//#define GLM_FORCE_CUDA
-//#include <glm/glm.hpp>
-//#define IX(x, y) (glm::clamp(x,0,N-1) + glm::clamp(y,0,N-1)*N)
+#define GLM_FORCE_CUDA
+#include <glm/glm.hpp>
+#define IX(x, y) (glm::clamp(x,0,N-1) + glm::clamp(y,0,N-1)*N)
 
-#define IX(x, y) (x + y*N)
+//#define IX(x, y) (x + y*N)
 #define NUM_THREADS 256
 
 namespace StableFluidsCuda {
@@ -44,7 +44,7 @@ namespace StableFluidsCuda {
     // device, global ??....
     __global__ void FluidSquareAddDensity_gpu(float* density, int x, int y, float amount, int N);
     __global__ void FluidSquareAddVelocity_gpu(float*velocityX, float* velocityY, int x, int y, float amountX, float amountY, int N);
-    void FluidSquareAddDensity(FluidSquare sq, int x, int y, float amount);
+    void FluidSquareAddDensity(FluidSquare* sq, int x, int y, float amount);
     void FluidSquareAddVelocity(FluidSquare* sq, int x, int y, float amountX, float amountY);
 
 }
