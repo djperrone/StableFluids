@@ -17,26 +17,20 @@ namespace StableFluidsCuda {
 
 
         checkCudaErrors(cudaMalloc((void**)&sq->density0, sizeof(float) *N* N));
-        cudaMemset(sq->density0, 0, sizeof(float) * N * N);
-
-      
+        cudaMemset(sq->density0, 0, sizeof(float) * N * N);      
 
         checkCudaErrors(cudaMalloc((void**)&sq->density, sizeof(float) * N * N));
-        cudaMemset(sq->density, 0, sizeof(float) * N * N);
-
-    
+        cudaMemset(sq->density, 0, sizeof(float) * N * N);    
 
         checkCudaErrors(cudaMalloc((void**)&sq->Vx, sizeof(float) * N * N));
         checkCudaErrors(cudaMalloc((void**)&sq->Vy, sizeof(float) * N * N));
         cudaMemset(sq->Vx, 0, sizeof(float) * N * N);
         cudaMemset(sq->Vy, 0, sizeof(float) * N * N);
 
-
         checkCudaErrors(cudaMalloc((void**)&sq->Vx0, sizeof(float) * N * N));
         checkCudaErrors(cudaMalloc((void**)&sq->Vy0, sizeof(float) * N * N));
         cudaMemset(sq->Vx0, 0, sizeof(float) * N * N);
-        cudaMemset(sq->Vy0, 0, sizeof(float) * N * N);
-       
+        cudaMemset(sq->Vy0, 0, sizeof(float) * N * N);       
     }
 
     void FluidSquareCreate_cpu(FluidSquare* sq, int size, float diffusion, float viscosity, float dt)
@@ -155,21 +149,28 @@ namespace StableFluidsCuda {
         float diff = sq->data.diff;
         float dt = sq->data.dt;
       
-
+        #define NUM_THREADS 256
         int blks = (N * N + NUM_THREADS - 1) / NUM_THREADS;
 
-        diffuse_gpu CUDA_KERNEL(1, 1)  (1, sq->Vx0, sq->Vx, visc, dt, 4, N);
+        diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS)  (1, sq->Vx0, sq->Vx, visc, dt, 4, N);
         cudaDeviceSynchronize();
-      /*  diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy0, sq->Vy, visc, dt, 4, N);
+        diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy0, sq->Vy, visc, dt, 4, N);
+        cudaDeviceSynchronize();
 
         project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx0, sq->Vy0, sq->Vx, sq->Vy, 4, N);
+        cudaDeviceSynchronize();
 
         advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (1, sq->Vx, sq->Vx0, sq->Vx0, sq->Vy0, dt, N);
+        cudaDeviceSynchronize();
         advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy, sq->Vy0, sq->Vx0, sq->Vy0, dt, N);
+        cudaDeviceSynchronize();
 
         project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx, sq->Vy, sq->Vx0, sq->Vy0, 4, N);
 
+        cudaDeviceSynchronize();
         diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density0, sq->density, diff, dt, 4, N);
-        advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density, sq->density0,sq->Vx, sq->Vy, dt, N);*/
+        cudaDeviceSynchronize();
+
+        advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density, sq->density0,sq->Vx, sq->Vy, dt, N);
     }
 }

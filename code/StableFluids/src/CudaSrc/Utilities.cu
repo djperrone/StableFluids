@@ -7,6 +7,7 @@ namespace StableFluidsCuda {
 
 	__device__ void set_corner_gpu(float* x, int N)
 	{
+		//printf(__FUNCTION__);
 		x[IX(0, 0)] = 0.5 * (x[IX(1, 0)] + x[IX(0, 1)]);
 		x[IX(0, N - 1)] = 0.5 * (x[IX(1, N - 1)] + x[IX(0, N - 2)]);
 		x[IX(N - 1, 0)] = 0.5 * (x[IX(N - 2, 0)] + x[IX(N - 1, 1)]);
@@ -14,33 +15,39 @@ namespace StableFluidsCuda {
 	}
 
 	__device__ void set_bnd_gpu(int b, float* x, int N, int tid)
-	{
-		if (tid == 0) {
-			set_corner_gpu(x, N);
+	{			
+		int i = tid % N;
+		int j = tid / N;
+		if (i >= 1 && i < N - 1 && j >= 1 && j < N - 1)
+		{
+			
+			x[IX(i, 0)] = b == 2 ? -x[IX(i, 1)] : x[IX(i, 1)];
+			x[IX(i, N - 1)] = b == 2 ? -x[IX(i, N - 2)] : x[IX(i, N - 2)];
+			x[IX(0, j)] = b == 1 ? -x[IX(1, j)] : x[IX(1, j)];
+			x[IX(N - 1, j)] = b == 1 ? -x[IX(N - 2, j)] : x[IX(N - 2, j)];
 		}
-
-		if (tid < 1 || tid >= N - 1) return;
-
-		x[IX(tid, 0)] = b == 2 ? -x[IX(tid, 1)] : x[IX(tid, 1)];
-		x[IX(tid, N - 1)] = b == 2 ? -x[IX(tid, N - 2)] : x[IX(tid, N - 2)];
-		x[IX(0, tid)] = b == 1 ? -x[IX(1, tid)] : x[IX(1, tid)];
-		x[IX(N - 1, tid)] = b == 1 ? -x[IX(N - 2, tid)] : x[IX(N - 2, tid)];
+		__syncthreads();
+		int n2 = N / 2;
+		if (i == n2 && j == n2) {
+			set_corner_gpu(x, N);
+			return;
+		}		
 	}
 
 	__device__ void lin_solve_gpu(int b, float* x, float* x0, float a, float c, int iter, int N, int tid)
 	{
-		// check this if it doesnt work
+		int localID = threadIdx.x;		
 		int i = tid % N;
 		int j = tid / N;
 
-		__shared__ float local_velocity[NUM_THREADS];
+		__shared__ float local_x[NUM_THREADS];
 
 		if (i < 1 || i > N - 2) return;
 		if (j < 1 || j > N - 2) return;
 
 		float cRecip = 1.0 / c;
 		for (int k = 0; k < iter; k++) {
-			x[IX(i, j)] =
+			local_x[localID] =
 				(x0[IX(i, j)]
 					+ a * (x[IX(i + 1, j)]
 						+ x[IX(i - 1, j)]
@@ -48,8 +55,9 @@ namespace StableFluidsCuda {
 						+ x[IX(i, j - 1)]
 						)) * cRecip;
 			__syncthreads();
-			set_bnd_gpu(b, x, N, tid);
+			x[IX(i, j)] = local_x[localID];
 			__syncthreads();
+			set_bnd_gpu(b, x, N, tid);
 
 		}
 	}
@@ -60,7 +68,58 @@ namespace StableFluidsCuda {
 		if (tid >= N * N) return;
 
 		float a = dt * diff * (N - 2) * (N - 2);
-		lin_solve_gpu(b, x, x0, a, 1 + 6 * a, iter, N, tid);
+		lin_solve_gpu(b, x, x0, a, 1 + 6 * a, iter, N, tid); 	
+		
+	}
+
+	__global__ void diffuse_gpu_linear(int b, float* x, float* x0, float diff, float dt, int iter, int N)
+	{
+		int tid = threadIdx.x + blockIdx.x * blockDim.x;
+		if (tid >= N * N) return;
+
+		float a = dt * diff * (N - 2) * (N - 2);
+		//lin_solve_gpu(b, x, x0, a, 1 + 6 * a, iter, N, tid);
+		float c = 1 + 6 * a;
+		float cRecip = 1.0 / c;
+		//*************************************
+	  //  iter = 1;
+		for (int k = 0; k < iter; k++) {
+			for(int i = 0; i < N*N; i++)
+			{
+				lin_solve_gpu(b, x, x0, a, 1 + 6 * a, iter, N, i);
+			}
+			/*for (int j = 1; j < N - 1; j++) {
+				for (int i = 1; i < N - 1; i++) {
+					x[IX(i, j)] =
+						(x0[IX(i, j)]
+							+ a * (x[IX(i + 1, j)]
+								+ x[IX(i - 1, j)]
+								+ x[IX(i, j + 1)]
+								+ x[IX(i, j - 1)]
+								)) * cRecip;
+				}
+			}*/
+			for (int i = 0; i < N * N; i++)
+			{
+				set_bnd_gpu(b, x, N, i);
+
+			}
+
+			//set_bnd(b, x, N);
+			/*for (int i = 1; i < N - 1; i++) {
+				x[IX(i, 0)] = b == 2 ? -x[IX(i, 1)] : x[IX(i, 1)];
+				x[IX(i, N - 1)] = b == 2 ? -x[IX(i, N - 2)] : x[IX(i, N - 2)];
+				x[IX(0, i)] = b == 1 ? -x[IX(1, i)] : x[IX(1, i)];
+				x[IX(N - 1, i)] = b == 1 ? -x[IX(N - 2, i)] : x[IX(N - 2, i)];
+			}
+
+			x[IX(0, 0)] = 0.5 * (x[IX(1, 0)] + x[IX(0, 1)]);
+			x[IX(0, N - 1)] = 0.5 * (x[IX(1, N - 1)] + x[IX(0, N - 2)]);
+			x[IX(N - 1, 0)] = 0.5 * (x[IX(N - 2, 0)] + x[IX(N - 1, 1)]);
+			x[IX(N - 1, N - 1)] = 0.5 * (x[IX(N - 2, N - 1)] + x[IX(N - 1, N - 2)]);*/
+		}
+
+
 	}
 
 	__global__ void project_gpu(float* velocX, float* velocY, float* p, float* div, int iter, int N)
@@ -104,7 +163,7 @@ namespace StableFluidsCuda {
 		__syncthreads();
 
 		set_bnd_gpu(2, velocY, N, tid);
-		__syncthreads();
+		//__syncthreads();
 
 	}
 
@@ -161,7 +220,7 @@ namespace StableFluidsCuda {
 		__syncthreads();
 
 		set_bnd_gpu(b, d, N, tid);
-		__syncthreads();
+		//__syncthreads();
 
 	}
 }

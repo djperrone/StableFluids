@@ -77,16 +77,16 @@ namespace StableFluids {
         float* density = sq->density;
 
         diffuse(1, Vx0, Vx, visc, dt, 4, N);
-      /*  diffuse(2, Vy0, Vy, visc, dt, 4, N);
+        diffuse(2, Vy0, Vy, visc, dt, 4, N);
 
         project(Vx0, Vy0, Vx, Vy, 4, N);
 
         advect(1, Vx, Vx0, Vx0, Vy0, dt, N);
         advect(2, Vy, Vy0, Vx0, Vy0, dt, N);
 
-        project(Vx, Vy, Vx0, Vy0, 4, N);
+       project(Vx, Vy, Vx0, Vy0, 4, N);
 
         diffuse(0, density0, density, diff, dt, 4, N);
-        advect(0, density, density0, Vx, Vy, dt, N);*/
+        advect(0, density, density0, Vx, Vy, dt, N);
     }
 }

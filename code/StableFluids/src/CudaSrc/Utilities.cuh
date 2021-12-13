@@ -9,4 +9,6 @@ namespace StableFluidsCuda {
 	__global__ void diffuse_gpu(int b, float* x, float* x0, float diff, float dt, int iter, int N);
 	__global__ void project_gpu(float* velocX, float* velocY, float* p, float* div, int iter, int N);
 	__global__ void advect_gpu(int b, float* d, float* d0, float* velocX, float* velocY, float dt, int N);
+	__global__ void diffuse_gpu_linear(int b, float* x, float* x0, float diff, float dt, int iter, int N);
+
 }

@@ -32,7 +32,7 @@ namespace Simulation {
 
 
 	private:
-
+		//long m_PreviousTime;
 		double m_CurrentTime = 0.0;
 		double m_PreviousTime = 0.0;
 		float particleScale = 0.03f;
@@ -48,7 +48,7 @@ namespace Simulation {
 		StableFluids::FluidSquare* sq_test;
 
 
-		int n = 2000;
+		int n = 5000;
 		float d = 0;
 		float v = .00001;
 		float dt = .005;
