@@ -7,7 +7,6 @@
 #include <GLFW/glfw3.h>
 
 
-
 #include "Novaura/Novaura.h"
 
 namespace Pgui {
@@ -119,6 +118,68 @@ namespace Pgui {
           
             //ImGui::SliderFloat("scale", &pscale, 0.0005f, 5.0f);
             ImGui::InputFloat("scale", &pscale, 0.0005f, 1.5f, 5);
+
+            /*if (save_num != common::ParticleData::num_particles || save_density != common::ParticleData::density ||
+                save_mass != common::ParticleData::mass || save_cutoff != common::ParticleData::cutoff) {
+                m_Changed = true;
+                spdlog::info("changed!");
+            }*/
+
+        }
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+        ImGui::End();
+    }
+
+    void Gui::DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data, int& n_per_side, float& squareScale, float& spacing)
+    {
+        ImGui::Begin("Particle Simulation");
+        if (!m_Changed)
+        {
+            if (stateInfo.PAUSE)
+            {
+                if (ImGui::Button("PLAY"))
+                {
+                    stateInfo.PAUSE = !stateInfo.PAUSE;
+                }
+
+            }
+            else
+            {
+                if (ImGui::Button("PAUSE"))
+                {
+                    stateInfo.PAUSE = !stateInfo.PAUSE;
+                }
+            }
+        }
+
+
+
+        if (ImGui::Button("RESET"))
+        {
+            stateInfo.RESET = !stateInfo.RESET;
+            if (m_Changed == true)m_Changed = false;
+        }
+        ImGui::Separator();
+
+        if (stateInfo.PAUSE)
+        {
+
+            ImGui::Separator();
+
+            //ImGui::SliderFloat("scale", &pscale, 0.0005f, 5.0f);
+          //  bool scaleChanged = ImGui::dragFloat("scale", &squareScale, 0.0000f, 2.0f, 1.0f);
+           // bool spacingChanged = ImGui::dragFloat("scale", &spacing, 0.0000f, 500.0f, 1.0f);
+            bool scaleChanged =  ImGui::SliderFloat("scale", &squareScale, 0.0000f, 2.0f);
+            bool spacingChanged = ImGui::SliderFloat("spacing", &spacing, 0.0000f, 1000.0f);
+           // bool sizeChanged = ImGui::SliderInt("num_sides", &n_per_side, 5, 500);
+            bool sizeChanged = ImGui::InputInt("num_sides", &n_per_side, 1, 500);
+
+
+            //bool stateChanged = scaleChanged | spacingChanged | sizeChanged;
+            bool stateChanged = sizeChanged;
+            
 
             /*if (save_num != common::ParticleData::num_particles || save_density != common::ParticleData::density ||
                 save_mass != common::ParticleData::mass || save_cutoff != common::ParticleData::cutoff) {

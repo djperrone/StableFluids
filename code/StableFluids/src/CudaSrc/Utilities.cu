@@ -141,26 +141,26 @@ namespace StableFluidsCuda {
 			- velocY[IX(i, j - 1)]
 			) / N;
 		p[IX(i, j)] = 0;
-		__syncthreads();
+		//__syncthreads();
 
 		set_bnd_gpu(0, div, N, tid);
-		__syncthreads();
+		//__syncthreads();
 
 		set_bnd_gpu(0, p, N, tid);
-		__syncthreads();
+		//__syncthreads();
 
 		lin_solve_gpu(0, p, div, 1, 6, iter, N, tid);
-		__syncthreads();
+		//__syncthreads();
 
 
 		velocX[IX(i, j)] -= 0.5f * (p[IX(i + 1, j)]
 			- p[IX(i - 1, j)]) * N;
 		velocY[IX(i, j)] -= 0.5f * (p[IX(i, j + 1)]
 			- p[IX(i, j - 1)]) * N;
-		__syncthreads();
+		//__syncthreads();
 
 		set_bnd_gpu(1, velocX, N, tid);
-		__syncthreads();
+		//__syncthreads();
 
 		set_bnd_gpu(2, velocY, N, tid);
 		//__syncthreads();

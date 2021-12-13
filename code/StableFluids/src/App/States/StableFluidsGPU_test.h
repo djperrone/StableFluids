@@ -10,6 +10,7 @@
 #include "CudaSrc/Fluid.cuh"
 
 #include "Benchmark/timer.h"
+#include "Benchmark/CudaTimer.cuh"
 
 namespace Simulation {
 
@@ -37,8 +38,8 @@ namespace Simulation {
 		double m_CurrentTime = 0.0;
 		double m_PreviousTime = 0.0;
 		float particleScale = 0.08f;
-		float spacing = n / 150;
-
+		float spacing;
+		float squareScale = 0.08f;
 
 		StateInfo m_StateInfo;
 		int counter = 0;
@@ -55,9 +56,10 @@ namespace Simulation {
 		float d = 0;
 		float v = .00001;
 		float dt = .005;
-		int n_per_side;
+		int n_per_side = sqrt(n);
 
 		void CompareResults();
 		Timer timer;
+		CudaTimer cudaTimer;
 	};
 }

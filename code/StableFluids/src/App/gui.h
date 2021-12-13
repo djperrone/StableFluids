@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include "Novaura/Core/Window.h"
 #include "States/StateInfo.h"
+#include "CudaSrc/Fluid.cuh"
 
 
 namespace Pgui {
@@ -16,6 +17,7 @@ namespace Pgui {
 
 		void Draw();		
 		void DrawStateButtons(Simulation::StateInfo& stateInfo, float& pscale);
+		void DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data,int& n_per_side, float& squareScale, float& spacing);
 		void DrawDockSpace(Simulation::StateInfo& stateInfo);
 
 		void BeginFrame();

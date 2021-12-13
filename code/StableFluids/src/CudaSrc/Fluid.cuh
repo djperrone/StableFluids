@@ -9,6 +9,7 @@
 #define NUM_THREADS 256
 
 #include "Benchmark/timer.h"
+#include "Benchmark/CudaTimer.cuh"
 
 namespace StableFluidsCuda {
 
@@ -41,7 +42,9 @@ namespace StableFluidsCuda {
     void FluidSquareFree(FluidSquare* sq);
     void FluidSquareFree_cpu(FluidSquare* sq);
 
+    void FluidSquareStep(FluidSquare* sq);
     void FluidSquareStep(FluidSquare* sq, Timer& timer);
+    void FluidSquareStep(FluidSquare* sq, CudaTimer& timer);
 
     // device, global ??....
     __global__ void FluidSquareAddDensity_gpu(float* density, int x, int y, float amount, int N);
