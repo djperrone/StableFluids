@@ -1,0 +1,10 @@
+size,function,duration
+GPU
+70,diffuse_gpu vx,1.6087
+70,diffuse_gpu vy,0.3159
+70,project 1,0.1033
+70,advect_gpu vx,0.0621
+70,advect_gpu vy,0.0577
+70,project_gpu 2,0.0959
+70,diffuse_gpu density,0.0731
+70,advect_gpu density,0.0036

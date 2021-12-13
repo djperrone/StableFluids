@@ -1,0 +1,19 @@
+size,function,duration
+CPU
+70,diffuse_cpu vx,0.1527
+70,diffuse_cpu vy,0.151
+70,project 1,0.17
+70,advect_cpu vx,0.0716
+70,advect_cpu vy,0.0715
+70,project_cpu 2,0.1446
+70,diffuse_cpu density,0.1231
+70,advect_cpu density,0.0736
+GPU
+70,diffuse_gpu vx,0.1486
+70,diffuse_gpu vy,0.0586
+70,project 1,0.069
+70,advect_gpu vx,0.0512
+70,advect_gpu vy,0.0462
+70,project_gpu 2,0.0761
+70,diffuse_gpu density,0.051
+70,advect_gpu density,0.0052

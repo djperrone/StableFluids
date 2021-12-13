@@ -142,35 +142,103 @@ namespace StableFluidsCuda {
         FluidSquareAddVelocity_gpu CUDA_KERNEL(1, 1)(sq->Vx, sq->Vy, x, y, amountX, amountY, sq->data.size);
     }
 
-    void FluidSquareStep(FluidSquare* sq) {
+    void FluidSquareStep(FluidSquare* sq, Timer& timer) {
 
         int N = sq->data.size;
         float visc = sq->data.visc;
         float diff = sq->data.diff;
-        float dt = sq->data.dt;
-      
-        #define NUM_THREADS 256
+        float dt = sq->data.dt;      
+       
         int blks = (N * N + NUM_THREADS - 1) / NUM_THREADS;
+        if (timer.GPU == false)
+        {
+            timer.SetFunctionName("diffuse_gpu vx");
+            timer.Start();
+            diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS)  (1, sq->Vx0, sq->Vx, visc, dt, 4, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
 
-        diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS)  (1, sq->Vx0, sq->Vx, visc, dt, 4, N);
-        cudaDeviceSynchronize();
-        diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy0, sq->Vy, visc, dt, 4, N);
-        cudaDeviceSynchronize();
+            timer.SetFunctionName("diffuse_gpu vy");
+            timer.Start();
+            diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy0, sq->Vy, visc, dt, 4, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
 
-        project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx0, sq->Vy0, sq->Vx, sq->Vy, 4, N);
-        cudaDeviceSynchronize();
+            timer.SetFunctionName("project 1");
+            timer.Start();
+            project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx0, sq->Vy0, sq->Vx, sq->Vy, 4, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
 
-        advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (1, sq->Vx, sq->Vx0, sq->Vx0, sq->Vy0, dt, N);
-        cudaDeviceSynchronize();
-        advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy, sq->Vy0, sq->Vx0, sq->Vy0, dt, N);
-        cudaDeviceSynchronize();
+            timer.SetFunctionName("advect_gpu vx");
+            timer.Start();
+            advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (1, sq->Vx, sq->Vx0, sq->Vx0, sq->Vy0, dt, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
 
-        project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx, sq->Vy, sq->Vx0, sq->Vy0, 4, N);
+            timer.SetFunctionName("advect_gpu vy");
+            timer.Start();
+            advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy, sq->Vy0, sq->Vx0, sq->Vy0, dt, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
 
-        cudaDeviceSynchronize();
-        diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density0, sq->density, diff, dt, 4, N);
-        cudaDeviceSynchronize();
+            timer.SetFunctionName("project_gpu 2");
+            timer.Start();
+            project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx, sq->Vy, sq->Vx0, sq->Vy0, 4, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
 
-        advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density, sq->density0,sq->Vx, sq->Vy, dt, N);
+            timer.SetFunctionName("diffuse_gpu density");
+            timer.Start();
+            diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density0, sq->density, diff, dt, 4, N);
+            cudaDeviceSynchronize();
+            timer.Flush();
+
+            timer.SetFunctionName("advect_gpu density");
+            timer.Start();
+            advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density, sq->density0, sq->Vx, sq->Vy, dt, N);
+            timer.Flush();
+
+            timer.GPU = true;
+        }
+        else
+        {
+           
+            diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS)  (1, sq->Vx0, sq->Vx, visc, dt, 4, N);
+            cudaDeviceSynchronize();
+          
+
+            diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy0, sq->Vy, visc, dt, 4, N);
+            cudaDeviceSynchronize();
+           
+
+         
+            project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx0, sq->Vy0, sq->Vx, sq->Vy, 4, N);
+            cudaDeviceSynchronize();
+           
+
+         
+            advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (1, sq->Vx, sq->Vx0, sq->Vx0, sq->Vy0, dt, N);
+            cudaDeviceSynchronize();
+          
+
+           
+            advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (2, sq->Vy, sq->Vy0, sq->Vx0, sq->Vy0, dt, N);
+            cudaDeviceSynchronize();
+          
+
+           
+            project_gpu CUDA_KERNEL(blks, NUM_THREADS) (sq->Vx, sq->Vy, sq->Vx0, sq->Vy0, 4, N);
+            cudaDeviceSynchronize();
+           
+           
+            diffuse_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density0, sq->density, diff, dt, 4, N);
+            cudaDeviceSynchronize();
+           
+
+          
+            advect_gpu CUDA_KERNEL(blks, NUM_THREADS) (0, sq->density, sq->density0, sq->Vx, sq->Vy, dt, N);
+           
+        }
     }
 }

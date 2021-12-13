@@ -8,6 +8,8 @@
 //#define IX(x, y) (x + y*N)
 #define NUM_THREADS 256
 
+#include "Benchmark/timer.h"
+
 namespace StableFluidsCuda {
 
     typedef struct
@@ -39,7 +41,7 @@ namespace StableFluidsCuda {
     void FluidSquareFree(FluidSquare* sq);
     void FluidSquareFree_cpu(FluidSquare* sq);
 
-    void FluidSquareStep(FluidSquare* sq);
+    void FluidSquareStep(FluidSquare* sq, Timer& timer);
 
     // device, global ??....
     __global__ void FluidSquareAddDensity_gpu(float* density, int x, int y, float amount, int N);
