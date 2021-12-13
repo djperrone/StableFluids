@@ -51,7 +51,7 @@ namespace Simulation {
 		StableFluids::FluidSquare* sq_test;
 
 
-		int n = 5000;
+		int n = 10000;
 		float d = 0;
 		float v = .00001;
 		float dt = .005;

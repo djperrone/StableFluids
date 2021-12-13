@@ -78,46 +78,64 @@ namespace StableFluids {
 
         if (timer.CPU == false)
         {
-            timer.SetFunctionName("diffuse_cpu vx");
-            timer.Start();
+            //timer.SetFunctionName("diffuse_cpu vx");
+            //timer.Start();
+            timer.BeginTimeFunction("diffuse_cpu vx");
             diffuse(1, Vx0, Vx, visc, dt, 4, N);
-            timer.Flush();
+            timer.EndTimeFunction();
+          //  timer.Flush();
 
-            timer.SetFunctionName("diffuse_cpu vy");
-            timer.Start();
+          //  timer.SetFunctionName("diffuse_cpu vy");
+          //  timer.Start();
+            timer.BeginTimeFunction("diffuse_cpu vy");
+
             diffuse(2, Vy0, Vy, visc, dt, 4, N);
-            timer.Flush();
+            timer.EndTimeFunction();
 
-            timer.SetFunctionName("project 1");
-            timer.Start();
+            //timer.Flush();
+
+          //  timer.SetFunctionName("project 1");
+           // timer.Start();
+            timer.BeginTimeFunction("project_cpu 1");
             project(Vx0, Vy0, Vx, Vy, 4, N);
-            timer.Flush();
+            timer.EndTimeFunction();
+            // timer.Flush();
 
 
-            timer.SetFunctionName("advect_cpu vx");
-            timer.Start();
+          //  timer.SetFunctionName("advect_cpu vx");
+          //  timer.Start();
+            timer.BeginTimeFunction("advect_cpu vx");
             advect(1, Vx, Vx0, Vx0, Vy0, dt, N);
-            timer.Flush();
+            timer.EndTimeFunction();
+            //  timer.Flush();
 
-            timer.SetFunctionName("advect_cpu vy");
-            timer.Start();
+          //  timer.SetFunctionName("advect_cpu vy");
+          //  timer.Start();
+            timer.BeginTimeFunction("advect_cpu vy");
             advect(2, Vy, Vy0, Vx0, Vy0, dt, N);
-            timer.Flush();
+            timer.EndTimeFunction();
+            //  timer.Flush();
 
-            timer.SetFunctionName("project_cpu 2");
-            timer.Start();
+           // timer.SetFunctionName("project_cpu 2");
+           // timer.Start();
+            timer.BeginTimeFunction("project_cpu 2");
             project(Vx, Vy, Vx0, Vy0, 4, N);
-            timer.Flush();
+            timer.EndTimeFunction();
+            // timer.Flush();
 
-            timer.SetFunctionName("diffuse_cpu density");
-            timer.Start();
+           // timer.SetFunctionName("diffuse_cpu density");
+           // timer.Start();
+            timer.BeginTimeFunction("diffuse_cpu density");
             diffuse(0, density0, density, diff, dt, 4, N);
-            timer.Flush();
+            timer.EndTimeFunction();
+            // timer.Flush();
 
-            timer.SetFunctionName("advect_cpu density");
-            timer.Start();
+          //  timer.SetFunctionName("advect_cpu density");
+          //  timer.Start();
+            timer.BeginTimeFunction("advect_cpu density");
             advect(0, density, density0, Vx, Vy, dt, N);
-            timer.Flush();
+          //  timer.Flush();
+            timer.EndTimeFunction();
             timer.CPU = true;
         }
         else

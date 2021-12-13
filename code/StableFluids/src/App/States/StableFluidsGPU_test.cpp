@@ -78,13 +78,15 @@ namespace Simulation {
 		{
 			//timer.SetFunctionName("sqstep");
 			//timer.Start();
-			timer.WriteSeparator("CPU");
+			//timer.WriteSeparator("CPU");
+			timer.CPU = false;
 			StableFluids::FluidSquareStep(sq_test, timer);
-			timer.WriteSeparator("GPU");
+			//timer.WriteSeparator("GPU");
 
-			StableFluidsCuda::FluidSquareStep(&sq, timer);
+			//StableFluidsCuda::FluidSquareStep(&sq, timer);
 			//timer.Flush();
 			//timer.WriteCSV();
+			timer.GPU = false;
 			StableFluidsCuda::FluidSquareStep(&sq,timer);
 			double currentTime = glfwGetTime();
 			//if (currentTime - m_PreviousTime >0.05)
@@ -136,7 +138,7 @@ namespace Simulation {
 				float d = sq_cpu.density[IX(i, j)];
 				//float color = 1.0f - d;
 				float color = 1.0f - (d > 1.0f ? 1.0f : d);
-				Novaura::BatchRenderer::DrawRectangle(glm::vec3(x + 1, y, 0.0f), glm::vec3(particleScale, particleScale, 0), glm::vec4(color, color, color,1.0f), glm::vec2(1.0f, 1.0f));
+				Novaura::BatchRenderer::DrawRectangle(glm::vec3(x + 1.3, y, 0.0f), glm::vec3(particleScale, particleScale, 0), glm::vec4(color, color, color,1.0f), glm::vec2(1.0f, 1.0f));
 
 			}
 			// cool
@@ -145,27 +147,27 @@ namespace Simulation {
 			//float addVelocityy = glm::sin(glfwGetTime());// *Novaura::Random::Float(-0.2f, 0.2f);
 		}
 
-		//for (int i = 0; i < n_per_side; i++)
-		//{
-		//	for (int j = 0; j < n_per_side; j++)
-		//	{
-		//		//spdlog::info("i j, {}, {}", i, j);
-		//		float scale = n / 500;
-		//		float x = i  * scale / width;
-		//		float y = j  * scale / height;
-		//		int N = n_per_side;
-		//		float d = sq_test->density[IX(i, j)];
+		for (int i = 0; i < n_per_side; i++)
+		{
+			for (int j = 0; j < n_per_side; j++)
+			{
+				//spdlog::info("i j, {}, {}", i, j);
+				float scale = n / 100;
+				float x = i  * scale / width;
+				float y = j  * scale / width;
+				int N = n_per_side;
+				float d = sq_test->density[IX(i, j)];
 
-		//		//Novaura::BatchRenderer::DrawRectangle(glm::vec3(x-1, y, 0.0f), glm::vec3(particleScale, particleScale, 0), glm::vec4(0.8f, 0.1f, 0.1f, glm::clamp(d, 0.0f, 1.0f)), glm::vec2(1.0f, 1.0f));
-		//		float color = 1.0f - (d > 1.0f ? 1.0f : d);
-		//		Novaura::BatchRenderer::DrawRectangle(glm::vec3(x -1, y, 0.0f), glm::vec3(particleScale, particleScale, 0), glm::vec4(color, color, color, 1.0f), glm::vec2(1.0f, 1.0f));
+				//Novaura::BatchRenderer::DrawRectangle(glm::vec3(x-1, y, 0.0f), glm::vec3(particleScale, particleScale, 0), glm::vec4(0.8f, 0.1f, 0.1f, glm::clamp(d, 0.0f, 1.0f)), glm::vec2(1.0f, 1.0f));
+				float color = 1.0f - (d > 1.0f ? 1.0f : d);
+				Novaura::BatchRenderer::DrawRectangle(glm::vec3(x -1.8, y, 0.0f), glm::vec3(particleScale, particleScale, 0), glm::vec4(color, color, color, 1.0f), glm::vec2(1.0f, 1.0f));
 
-		//	}
+			}
 		//	// cool
 		//	//float addDensity = Novaura::Random::Float(0.0f, 25.f);
 		//	//float addVelocityx = glm::sin(glfwGetTime()) * Novaura::Random::Float(-0.2f, 0.2f);
 		//	//float addVelocityy = glm::sin(glfwGetTime());// *Novaura::Random::Float(-0.2f, 0.2f);
-		//}
+		}
 
 	
 
@@ -180,6 +182,7 @@ namespace Simulation {
 
 	void StableFluidsGPU_test::OnExit()
 	{
+		timer.Flush();
 		StableFluidsCuda::FluidSquareFree(&sq);
 		StableFluidsCuda::FluidSquareFree_cpu(&sq_cpu);
 		StableFluids::FluidSquareFree(sq_test);
