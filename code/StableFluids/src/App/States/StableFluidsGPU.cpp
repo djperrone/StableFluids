@@ -38,10 +38,12 @@ namespace Simulation {
 
 		StableFluidsCuda::FluidSquareCreate(&sq, n_per_side, d, v, dt);
 
-		StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, 50);
-		StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, 3, 3);
+		StableFluidsCuda::FluidSquareAddDensity(&sq, m_AddPos.x, m_AddPos.y, m_Add.z);
+		StableFluidsCuda::FluidSquareAddVelocity(&sq, m_AddPos.x, m_AddPos.y, m_Add.x, m_Add.y);
 
-		spacing = n_per_side * n_per_side / 100;
+		//StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, 50);
+		//StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, 3, 3);
+
 
 		
 		m_PreviousTime = glfwGetTime();
@@ -59,19 +61,13 @@ namespace Simulation {
 		for (int i = 0; i < n_per_side; i++)
 		{
 			for (int j = 0; j < n_per_side; j++)
-			{
-				//spdlog::info("i j, {}, {}", i, j);
-				//spacing = scale;
+			{				
 				float scale = n / 50;
-				float x = i * scale / width;
-				float y = j * scale / width;
+				float x = i * spacing / width;
+				float y = j * spacing / width;
 				
 				int N = n_per_side;
-				m_Locations[i + j * n_per_side] = { x,y,0 };
-				//spdlog::info("x: {} y: {}", m_Locations[i].x, m_Locations[i].y);
-				//float color = 1.0f - (d > 1.0f ? 1.0f : d);
-				//Novaura::BatchRenderer::DrawRectangle(glm::vec3(x, y, 0.0f), glm::vec3(squareScale, squareScale, 0), glm::vec4(color, color, color, 1.0f), glm::vec2(1.0f, 1.0f));
-
+				m_Locations[i + j * n_per_side] = { x - 1.5f,y - 1.5f,0 };				
 			}
 		}
 
@@ -81,7 +77,7 @@ namespace Simulation {
 
 		Novaura::Renderer::InitInstancedSquares(n_per_side * n_per_side, squareScale, m_Locations_gpu, sq.density, backgroundColor, colorMask);
 		//Novaura::Renderer::UpdateLocationMatrices(m_Locations_gpu, squareScale, n_per_side * n_per_side);
-		
+		cudaFree(m_Locations_gpu);
 	}
 
 	void StableFluidsGPU::HandleInput()
@@ -98,29 +94,33 @@ namespace Simulation {
 		m_CameraController->Update(*Novaura::InputHandler::GetCurrentWindow(), deltaTime);
 		if (!m_StateInfo.PAUSE)
 		{
-			
-			
-		
-		
 		
 			StableFluidsCuda::FluidSquareStep(&sq);
 
-			Novaura::Renderer::UpdateInstancedColors(backgroundColor, colorMask, sq.density, n_per_side * n_per_side);
-			
+			Novaura::Renderer::UpdateInstancedColors(backgroundColor, colorMask, sq.density, n_per_side * n_per_side);			
 
 			double currentTime = glfwGetTime();
 			//if (currentTime - m_PreviousTime >0.05)
+			//if(Novaura::InputHandler::IsPressed(GLFW_KEY_SPACE))
+			if(addForce)
 			{
 				m_PreviousTime = currentTime;
-				float addDensity = 5.0f;
-				float addVelocityx = (10 + glm::sin(glfwGetTime() * 2.0f)) * 0.5f;// *Novaura::Random::Float(-0.2f, 0.2f);
-				float addVelocityy = glm::sin(glfwGetTime() / 2.0f) * 0.5f;
-								
+				////m_Add.x = (10 + glm::sin(glfwGetTime() * 2.0f) * 0.5f);
+				//m_Add.x == (10 + glm::sin(glfwGetTime() * 2.0f)) * 0.5f;// *Novaura::Random::Float(-0.2f, 0.2f);
+				//m_Add.y == glm::sin(glfwGetTime() / 2.0f) * 0.5f;
+
+				//m_Add.x = glm::cos(m_Angle.x);// *Novaura::Random::Float(-0.2f, 0.2f);
+				//m_Add.y = glm::sin(m_Angle.y);
+
+				//m_Add.y = glm::sin(glfwGetTime() / 2.0f) * 0.5f;
+				//m_Add.z = 5.0f;
+				//float addDensity = 5.0f;
+				//float addVelocityx = (10 + glm::sin(glfwGetTime() * 2.0f)) * 0.5f;// *Novaura::Random::Float(-0.2f, 0.2f);
+				//float addVelocityy = glm::sin(glfwGetTime() / 2.0f) * 0.5f;								
 				
-				StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, addDensity);
-				StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, addVelocityx, addVelocityy);	
-			}					
-		
+				StableFluidsCuda::FluidSquareAddDensity(&sq, m_AddPos.x, m_AddPos.y, m_Add.z);
+				StableFluidsCuda::FluidSquareAddVelocity(&sq,m_AddPos.x, m_AddPos.y, m_Add.x, m_Add.y);
+			}							
 		}
 	}
 
@@ -131,17 +131,14 @@ namespace Simulation {
 		Novaura::Renderer::BeginSceneInstanced(m_CameraController->GetCamera());
 		m_Gui->BeginFrame();
 
-		float width = Novaura::InputHandler::GetCurrentWindow()->Width;
+		/*float width = Novaura::InputHandler::GetCurrentWindow()->Width;
 		float height = Novaura::InputHandler::GetCurrentWindow()->Height;
-		float aspectRatio = Novaura::InputHandler::GetCurrentWindow()->AspectRatio;
-		
-	
-	
-	
+		float aspectRatio = Novaura::InputHandler::GetCurrentWindow()->AspectRatio;	
+	*/
 
 		Novaura::Renderer::EndInstancedSquares();
-		// spacing, fluiddata, color, vx, vy, color channel bool
-		m_Gui->DrawStateButtons(m_StateInfo,sq.data, n_per_side, squareScale, spacing, backgroundColor, colorMask);
+		
+		m_Gui->DrawStateButtons(m_StateInfo,sq.data, n_per_side, squareScale, spacing,m_AddPos, m_Add, backgroundColor, colorMask, addForce);
 
 		m_Gui->EndFrame();
 	}
@@ -151,7 +148,7 @@ namespace Simulation {
 	void StableFluidsGPU::OnExit()
 	{		
 		StableFluidsCuda::FluidSquareFree(&sq);	
-		cudaFree(m_Locations_gpu);
+		//cudaFree(m_Locations_gpu);
 		Novaura::Renderer::ShutDownInstancedSquares();
 	}
 

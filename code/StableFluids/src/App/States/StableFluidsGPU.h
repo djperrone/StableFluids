@@ -39,27 +39,31 @@ namespace Simulation {
 		double m_CurrentTime = 0.0;
 		double m_PreviousTime = 0.0;
 		float particleScale = 0.08f;
-		float spacing;
+		//float spacing;
 		float squareScale = 0.08f;
 
 		CudaMath::Vector4f colorMask = { 1.0f,1.0f,1.0f,1.0f };
-		CudaMath::Vector4f backgroundColor = {1.0f,1.0f,1.0f,1.0f};
+		CudaMath::Vector4f backgroundColor = { 1.0f,1.0f,1.0f,1.0f };
 
 		StateInfo m_StateInfo;
 		int counter = 0;
 
 		std::unique_ptr<Pgui::Gui> m_Gui;
-
+		bool addForce = false;
 		// final
 		StableFluidsCuda::FluidSquare sq;
-		
 
+		//x,y for velocity, z for density
+		CudaMath::Vector3f m_Add{3,3,50};
+		CudaMath::Vector2f m_Angle{ 1.8,0.0f };
 
 		int n = 5000;
 		float d = 0;
 		float v = .00001;
 		float dt = .005;
 		int n_per_side = sqrt(n);
+		float spacing = 100;
+		CudaMath::Vector2i m_AddPos{n_per_side / 2, n_per_side / 2};
 
 		CudaMath::Vector3f* m_Locations;
 		CudaMath::Vector3f* m_Locations_gpu;

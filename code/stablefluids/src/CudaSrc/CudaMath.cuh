@@ -7,6 +7,26 @@
 
 namespace CudaMath {
 
+	typedef union
+	{
+		int vec[2];
+
+		struct
+		{
+			int x, y;
+		};
+	}Vector2i;
+
+	typedef union
+	{
+		float vec[2];
+
+		struct
+		{
+			float x, y;
+		};
+	}Vector2f;
+
 	typedef union 
 	{
 		float vec[3];
@@ -31,6 +51,8 @@ namespace CudaMath {
 		float mat[16];
 		Vector4f rows[4];	
 	}Matrix44f;
+
+
 
 #define MAKE_IDENTITY(dest)\
 dest.rows[0] = CudaMath::Vector4f({ 1.0f, 0.0f, 0.0f, 0.0f });\

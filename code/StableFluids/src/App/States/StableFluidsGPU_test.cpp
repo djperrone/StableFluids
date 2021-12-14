@@ -176,7 +176,7 @@ namespace Simulation {
 
 		//	}
 		////	// cool
-		////	//float addDensity = Novaura::Random::Float(0.0f, 25.f);
+		////	//float addDensity =   Novaura::Random::Float(0.0f, 25.f);
 		////	//float addVelocityx = glm::sin(glfwGetTime()) * Novaura::Random::Float(-0.2f, 0.2f);
 		////	//float addVelocityy = glm::sin(glfwGetTime());// *Novaura::Random::Float(-0.2f, 0.2f);
 		//}

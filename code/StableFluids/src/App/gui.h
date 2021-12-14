@@ -18,6 +18,7 @@ namespace Pgui {
 		void Draw();		
 		void DrawStateButtons(Simulation::StateInfo& stateInfo, float& pscale);
 		void DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data, int& n_per_side, float& squareScale, float& spacing);
+		void DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data, int& n_per_side, float& squareScale, float& spacing, CudaMath::Vector2i& addPos, CudaMath::Vector3f& addData, CudaMath::Vector4f& backgroundColor, CudaMath::Vector4f& colorMask, bool& addForce);
 		void DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data,int& n_per_side, float& squareScale, float& spacing,CudaMath::Vector4f& backgroundColor, CudaMath::Vector4f& colorMask);
 		void DrawDockSpace(Simulation::StateInfo& stateInfo);
 

@@ -49,56 +49,16 @@ namespace CudaMath {
 		int tid = blockDim.x * blockIdx.x + threadIdx.x;
 		if (tid >= n) return;
 		float d = densityVals[tid];
-		//CudaMath::Vector4f colorMask = { 1.0f, 1.0f, 1.0f, 1.0f };
+		
 
-		float r, g, b;
-	
+		//float r, g, b;
 
-	/*	r = inColor.x;
-		g = inColor.y;
-		b = inColor.z;		*/
-
-		//------------------------------
-		//r = inColor.x - (d > inColor.x ? inColor.x : d * colorMask.x);
-		//g = inColor.y - (d > inColor.y ? inColor.y : d * colorMask.y);
-		//b = inColor.z - (d > inColor.z ? inColor.z : d * colorMask.z);
-
-		float color = 1.0f - (d > 1.0f ? 1.0f : d);
-		//r = g = b = color;
-		//Vector4f outColor = { d * colorMask.x, d * colorMask.y, d * colorMask.z, 1.0f };
-		Vector4f outColor = { backgroundColor.x - d * colorMask.x, backgroundColor.y - d * colorMask.y, backgroundColor.z - d * colorMask.z, 1.0f };
-		// 
-		//Vector4f outColor = { r, g, b, 1.0f };
+		float color = 1.0f - (d > 1.0f ? 1.0f : d);	
+		Vector4f outColor = { backgroundColor.x - d * colorMask.x, backgroundColor.y - d * colorMask.y, backgroundColor.z - d * colorMask.z, 1.0f };		
 
 		outColors[tid] = outColor;
 
-		/*	r = inColor.x - d * 1.0f - colorMask.x;
-		g = inColor.y - d * 1.0f - colorMask.y;
-		b = inColor.z - d * 1.0f - colorMask.z;*/
-
-		/*r = inColor.x + d * colorMask.x > 1.0f ? 1.0f : inColor.x + d * colorMask.x;
-		g = inColor.y + d * colorMask.y > 1.0f ? 1.0f : inColor.y + d * colorMask.y;
-		b = inColor.z + d * colorMask.z > 1.0f ? 1.0f : inColor.z + d * colorMask.z;*/
-
-		//float color = 1.0f - d;
-		//float r = inColor.x - (d > inColor.x ? inColor.x : d);
-		////float g = inColor.y - (d > inColor.y ? inColor.y : d);
-		//float g = d;
-		//float b = inColor.z - (d > inColor.z ? inColor.z : d);
-	//	float b = inColor.z - (d > inColor.z ? inColor.z : d);
-
-		//r *= 1.0f;
-		//b *= 0.0f;
-		//g *= 0.0f;
-
-		/*float r = d > inColor.x ? inColor.x : inColor.x - d;
-		float g = d > inColor.y ? inColor.y : inColor.y - d;
-		float b = d > inColor.z ? inColor.z : inColor.z - d;*/
-		/*float g = inColor.y * d;
-		float b = inColor.z * d;*/
-		//float g = inColor.y - (d > inColor.y ? inColor.y : d);
-		//float b = inColor.z - (d > inColor.z ? inColor.z : d);
-		//Vector4f outColor = { inColor.x - d * inColor.x, 1.0f - d * inColor.y, 1.0f - d * inColor.z, 1.0f };
+		
 		
 	}
 	__global__ void MatMul44Batch_gpu(Matrix44f* inGrid, Matrix44f* B, Matrix44f* outGrid, int numParticles)
