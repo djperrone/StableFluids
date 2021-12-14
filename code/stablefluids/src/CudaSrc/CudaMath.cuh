@@ -62,5 +62,6 @@ dest.rows[3] = CudaMath::Vector4f({ x,    y,    z,    1.0f });
 	__global__ void MatMul44_gpu(Matrix44f* A, Matrix44f* B, Matrix44f* C, int numParticles);	
 	void MatMul44_cpu(Matrix44f* A, Matrix44f* B, Matrix44f* C, int N);
 	
-	
+	void __global__ MakeTranslationMatrices_gpu(Matrix44f* matrices, CudaMath::Vector3f* locations, size_t n);
+	void MakeTranslationMatrices_cpu(Matrix44f* matrices, CudaMath::Vector3f* locations, size_t n);
 }

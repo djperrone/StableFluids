@@ -12,14 +12,15 @@
 #include "Benchmark/timer.h"
 #include "Benchmark/CudaTimer.cuh"
 
+#include "CudaSrc/CudaMath.cuh"
+
 namespace Simulation {
 
-
-	class StableFluidsGPU_test : public Novaura::State
+	class StableFluidsGPU : public Novaura::State
 	{
 	public:
-		StableFluidsGPU_test();
-		StableFluidsGPU_test(std::shared_ptr<Novaura::Window> window, std::shared_ptr<Novaura::CameraController> cameraController, std::shared_ptr<Novaura::StateMachine> stateMachine);
+		StableFluidsGPU();
+		StableFluidsGPU(std::shared_ptr<Novaura::Window> window, std::shared_ptr<Novaura::CameraController> cameraController, std::shared_ptr<Novaura::StateMachine> stateMachine);
 
 		virtual void OnEnter() override;
 
@@ -48,8 +49,7 @@ namespace Simulation {
 
 		// final
 		StableFluidsCuda::FluidSquare sq;
-		StableFluidsCuda::FluidSquare sq_cpu;
-		StableFluids::FluidSquare* sq_test;
+		
 
 
 		int n = 5000;
@@ -58,8 +58,8 @@ namespace Simulation {
 		float dt = .005;
 		int n_per_side = sqrt(n);
 
-		void CompareResults();
-		Timer timer;
-		CudaTimer cudaTimer;
+		CudaMath::Vector3f* m_Locations;
+		CudaMath::Vector3f* m_Locations_gpu;
+		
 	};
 }

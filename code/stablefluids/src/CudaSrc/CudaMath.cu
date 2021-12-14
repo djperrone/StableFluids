@@ -19,6 +19,26 @@ namespace CudaMath {
 			}
 		}
 	}
+	void __global__ MakeTranslationMatrices_gpu(Matrix44f* matrices, CudaMath::Vector3f* locations, size_t n)
+	{
+		int tid = blockDim.x * blockIdx.x + threadIdx.x;
+		if (tid >= n) return;
+		
+		MAKE_TRANSLATION_xyz(matrices[tid], (float)locations[tid].x, (float)locations[tid].y, 0.0f);
+	}
+	void MakeTranslationMatrices_cpu(Matrix44f* matrices, CudaMath::Vector3f* locations, size_t n)
+	{
+		int num_blocks = (n + NUM_THREADS - 1) / NUM_THREADS;
+
+		MakeTranslationMatrices_gpu CUDA_KERNEL(num_blocks, NUM_THREADS)(matrices, locations, n);
+		cudaError_t cudaerr = cudaDeviceSynchronize();
+		if (cudaerr != cudaSuccess)
+		{
+			printf("translation kernel launch failed with error \"%s\".\n",
+				cudaGetErrorString(cudaerr));
+			exit(-1);
+		}
+	}
 	__global__ void MatMul44Batch_gpu(Matrix44f* inGrid, Matrix44f* B, Matrix44f* outGrid, int numParticles)
 	{	
 		int tid = blockDim.x * blockIdx.x + threadIdx.x;

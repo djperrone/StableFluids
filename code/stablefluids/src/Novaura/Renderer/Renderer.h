@@ -48,5 +48,11 @@ namespace Novaura {
 
 		static void EndInteropInstancedCircles();		
 
+		static void InitInstancedSquares(unsigned int amount, float scale, const CudaMath::Vector4f& color);
+		static void UpdateLocationMatrices(CudaMath::Vector3f* locations, float scale, int n);
+		static void EndInstancedSquares();
+		static void ShutDownInstancedSquares();
+		//static void BeginSceneInstanced(const Camera& camera);
+
 	};
 }
