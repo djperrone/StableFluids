@@ -79,8 +79,8 @@ namespace Simulation {
 
 		free(m_Locations);
 
-		Novaura::Renderer::InitInstancedSquares(n_per_side * n_per_side, squareScale, {1.0f,1.0f,1.0f,1.0f});
-		Novaura::Renderer::UpdateLocationMatrices(m_Locations_gpu, squareScale, n_per_side * n_per_side);
+		Novaura::Renderer::InitInstancedSquares(n_per_side * n_per_side, squareScale, m_Locations_gpu, sq.density, backgroundColor, colorMask);
+		//Novaura::Renderer::UpdateLocationMatrices(m_Locations_gpu, squareScale, n_per_side * n_per_side);
 		
 	}
 
@@ -104,6 +104,8 @@ namespace Simulation {
 		
 		
 			StableFluidsCuda::FluidSquareStep(&sq);
+
+			Novaura::Renderer::UpdateInstancedColors(backgroundColor, colorMask, sq.density, n_per_side * n_per_side);
 			
 
 			double currentTime = glfwGetTime();
@@ -139,7 +141,7 @@ namespace Simulation {
 
 		Novaura::Renderer::EndInstancedSquares();
 		// spacing, fluiddata, color, vx, vy, color channel bool
-		m_Gui->DrawStateButtons(m_StateInfo,sq.data, n_per_side, squareScale, spacing);
+		m_Gui->DrawStateButtons(m_StateInfo,sq.data, n_per_side, squareScale, spacing, backgroundColor, colorMask);
 
 		m_Gui->EndFrame();
 	}

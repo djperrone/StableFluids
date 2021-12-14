@@ -42,6 +42,9 @@ namespace Simulation {
 		float spacing;
 		float squareScale = 0.08f;
 
+		CudaMath::Vector4f colorMask = { 1.0f,1.0f,1.0f,1.0f };
+		CudaMath::Vector4f backgroundColor = {1.0f,1.0f,1.0f,1.0f};
+
 		StateInfo m_StateInfo;
 		int counter = 0;
 

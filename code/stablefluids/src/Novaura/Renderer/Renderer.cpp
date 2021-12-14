@@ -51,7 +51,7 @@ namespace Novaura {
 
 		CudaMath::Matrix44f* ModelMatrices;
 		
-		cudaGraphicsResource_t positionsVBO_CUDA = 0;
+		cudaGraphicsResource_t CudaGraphicsResource = 0;
 		CudaMath::Matrix44f* translationMatrices_d = nullptr;
 		CudaMath::Vector4f* colorVecs_d = nullptr;
 		CudaMath::Matrix44f* scaleMatrix_d = nullptr;
@@ -363,7 +363,7 @@ namespace Novaura {
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);	
 
-		//CudaGLInterop::RegisterCudaGLBuffer(s_RenderData.positionsVBO_CUDA, s_RenderData.instanceVBO);
+		//CudaGLInterop::RegisterCudaGLBuffer(s_RenderData.CudaGraphicsResource, s_RenderData.instanceVBO);
 	}	
 
 	void Renderer::DrawInstancedCircle_glm(const Rectangle& rectangle, const glm::vec2& quantity)
@@ -449,8 +449,8 @@ namespace Novaura {
 
 		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amount, 0, GL_DYNAMIC_DRAW);
-		//CudaGLInterop::RegisterCudaGLBuffer(s_RenderData.positionsVBO_CUDA, &s_RenderData.instanceVBO);
-		cudaGraphicsGLRegisterBuffer(&s_RenderData.positionsVBO_CUDA, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
+		//CudaGLInterop::RegisterCudaGLBuffer(s_RenderData.CudaGraphicsResource, &s_RenderData.instanceVBO);
+		cudaGraphicsGLRegisterBuffer(&s_RenderData.CudaGraphicsResource, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
 
 		//glBindVertexArray(s_RenderData.sphereVAO);
 
@@ -478,13 +478,13 @@ namespace Novaura {
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amount, 0, GL_DYNAMIC_DRAW);
-		//CudaGLInterop::RegisterCudaGLBuffer(s_RenderData.positionsVBO_CUDA, &s_RenderData.instanceVBO);
-		cudaGraphicsGLRegisterBuffer(&s_RenderData.positionsVBO_CUDA, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
+		//CudaGLInterop::RegisterCudaGLBuffer(s_RenderData.CudaGraphicsResource, &s_RenderData.instanceVBO);
+		cudaGraphicsGLRegisterBuffer(&s_RenderData.CudaGraphicsResource, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
 	}
 
 	void Renderer::RegisterCudaGLDevice()
 	{
-		cudaGraphicsGLRegisterBuffer(&s_RenderData.positionsVBO_CUDA, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
+		cudaGraphicsGLRegisterBuffer(&s_RenderData.CudaGraphicsResource, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
 	}
 
 	void Renderer::EndInteropInstancedCircles()
@@ -495,7 +495,7 @@ namespace Novaura {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);		
 	}
 
-	void Renderer::InitInstancedSquares(unsigned int amount, float scale, const CudaMath::Vector4f& color)
+	void Renderer::InitInstancedSquares(unsigned int amount, float scale, CudaMath::Vector3f* locations, float* densityVals, const CudaMath::Vector4f& backgroundColor, const CudaMath::Vector4f& colorMask)
 	{
 		constexpr unsigned int numIndices = 6;
 
@@ -538,7 +538,8 @@ namespace Novaura {
 
 		for (int i = 0; i < amount; i++)
 		{
-			colors[i] = { 1.0f,0.3f,0.3f,1.0f };
+			
+			colors[i] = { (float)i / amount ,0.3f,0.1f,1.0f };
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.colorVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(CudaMath::Vector4f) * amount, &colors[0], GL_DYNAMIC_DRAW);
@@ -553,7 +554,6 @@ namespace Novaura {
 		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(CudaMath::Matrix44f) * amount, 0, GL_DYNAMIC_DRAW);
 
-		cudaGraphicsGLRegisterBuffer(&s_RenderData.positionsVBO_CUDA, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
 
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(CudaMath::Matrix44f), (void*)0);
@@ -584,21 +584,29 @@ namespace Novaura {
 		cudaMalloc((void**)&s_RenderData.scaleMatrix_d, sizeof(CudaMath::Matrix44f));
 		cudaMemcpy(s_RenderData.scaleMatrix_d, &scaleMatrix, sizeof(CudaMath::Matrix44f), cudaMemcpyHostToDevice);
 		cudaMalloc((void**)&s_RenderData.translationMatrices_d, sizeof(CudaMath::Matrix44f) * amount);
+		
+		cudaGraphicsGLRegisterBuffer(&s_RenderData.CudaGraphicsResource, s_RenderData.instanceVBO, cudaGraphicsRegisterFlagsWriteDiscard);
+		UpdateLocationMatrices(locations, scale, amount);
+		cudaGraphicsUnregisterResource(s_RenderData.CudaGraphicsResource);
+
+		cudaGraphicsGLRegisterBuffer(&s_RenderData.CudaGraphicsResource, s_RenderData.colorVBO, cudaGraphicsRegisterFlagsWriteDiscard);
+		UpdateInstancedColors(backgroundColor, colorMask, densityVals, amount);
+
 	}
 
 	void Renderer::UpdateLocationMatrices(CudaMath::Vector3f* locations, float scale, int n)
 	{
 		size_t num_bytes;
 		CudaMath::Matrix44f* resultMatrices = nullptr;
-		cudaGraphicsMapResources(1, &s_RenderData.positionsVBO_CUDA, 0);
-		cudaGraphicsResourceGetMappedPointer((void**)&resultMatrices, &num_bytes, s_RenderData.positionsVBO_CUDA);
+		cudaGraphicsMapResources(1, &s_RenderData.CudaGraphicsResource, 0);
+		cudaGraphicsResourceGetMappedPointer((void**)&resultMatrices, &num_bytes, s_RenderData.CudaGraphicsResource);
 		if (num_bytes != s_RenderData.MaxCircles * sizeof(CudaMath::Matrix44f))
 			spdlog::info("bytes dont match updatematriucesinterop");
 
 		CudaMath::MakeTranslationMatrices_cpu(s_RenderData.translationMatrices_d, locations, n);
 
 		CudaMath::MatMul44Batch_cpu(s_RenderData.translationMatrices_d, s_RenderData.scaleMatrix_d, resultMatrices, n);
-		cudaGraphicsUnmapResources(1, &s_RenderData.positionsVBO_CUDA, 0);
+		cudaGraphicsUnmapResources(1, &s_RenderData.CudaGraphicsResource, 0);
 	}
 
 	void Renderer::EndInstancedSquares()
@@ -613,6 +621,19 @@ namespace Novaura {
 	{
 		cudaFree(s_RenderData.scaleMatrix_d);
 		cudaFree(s_RenderData.translationMatrices_d);
+	}
+
+	void Renderer::UpdateInstancedColors(const CudaMath::Vector4f& backgroundColor, const CudaMath::Vector4f& colorMask, float* densityVals, int n)
+	{
+		size_t num_bytes;
+		CudaMath::Vector4f* resultColors = nullptr;
+		cudaGraphicsMapResources(1, &s_RenderData.CudaGraphicsResource, 0);
+		cudaGraphicsResourceGetMappedPointer((void**)&resultColors, &num_bytes, s_RenderData.CudaGraphicsResource);
+		if (num_bytes != s_RenderData.MaxCircles * sizeof(CudaMath::Vector4f))
+			spdlog::info("bytes dont match update colors");
+
+		CudaMath::UpdateColors_cpu(backgroundColor, colorMask, densityVals, resultColors, n);
+		cudaGraphicsUnmapResources(1, &s_RenderData.CudaGraphicsResource, 0);
 	}
 
 

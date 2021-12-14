@@ -132,6 +132,84 @@ namespace Pgui {
         ImGui::End();
     }
 
+    void Pgui::Gui::DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data, int& n_per_side, float& squareScale, float& spacing, CudaMath::Vector4f& backgroundColor, CudaMath::Vector4f& colorMask)
+    {
+        ImGui::Begin("Particle Simulation");
+        if (!m_Changed)
+        {
+            if (stateInfo.PAUSE)
+            {
+                if (ImGui::Button("PLAY"))
+                {
+                    stateInfo.PAUSE = !stateInfo.PAUSE;
+                }
+
+            }
+            else
+            {
+                if (ImGui::Button("PAUSE"))
+                {
+                    stateInfo.PAUSE = !stateInfo.PAUSE;
+                }
+            }
+        }
+
+
+
+        if (ImGui::Button("RESET"))
+        {
+            stateInfo.RESET = !stateInfo.RESET;
+            if (m_Changed == true)m_Changed = false;
+        }
+        ImGui::Separator();
+
+        if (stateInfo.PAUSE)
+        {
+
+            ImGui::Separator();
+
+            //ImGui::SliderFloat("scale", &pscale, 0.0005f, 5.0f);
+          //  bool scaleChanged = ImGui::dragFloat("scale", &squareScale, 0.0000f, 2.0f, 1.0f);
+           // bool spacingChanged = ImGui::dragFloat("scale", &spacing, 0.0000f, 500.0f, 1.0f);
+            bool scaleChanged = ImGui::SliderFloat("scale", &squareScale, 0.0000f, 2.0f);
+            bool spacingChanged = ImGui::SliderFloat("spacing", &spacing, 0.0000f, 1000.0f);
+            // bool sizeChanged = ImGui::SliderInt("num_sides", &n_per_side, 5, 500);
+            bool sizeChanged = ImGui::InputInt("num_sides", &n_per_side, 1, 500);
+            int r = (int)colorMask.x, g = (int)colorMask.y, b = (int)colorMask.z;
+           /* bool maskrChanged = ImGui::InputInt("maskR", &r);
+            bool maskgChanged = ImGui::InputInt("maskg", &g);
+            bool maskbChanged = ImGui::InputInt("maskb", &b);*/
+
+            bool maskrChanged = ImGui::SliderFloat("maskR", &colorMask.x,-1.0f,1.0f);
+            bool maskgChanged = ImGui::SliderFloat("maskg", &colorMask.y,-1.0f,1.0f);
+            bool maskbChanged = ImGui::SliderFloat("maskb", &colorMask.z,-1.0f,1.0f);
+            ImVec4 tempColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+
+          //  ImGui::ColorButton("background color", tempColor);
+            ImGui::ColorEdit4("background color", backgroundColor.vec);
+           // ImGui::ColorEdit3("color", colorMask.vec);
+          //  ImGui::("color2", ImVec2(2, 1));
+
+           /* colorMask.x =(float)glm::clamp(r,-1,1);
+            colorMask.y =(float)glm::clamp(g, -1, 1);
+            colorMask.z =(float)glm::clamp(b, -1, 1);*/
+            //bool stateChanged = scaleChanged | spacingChanged | sizeChanged;
+            bool stateChanged = sizeChanged;
+
+
+            /*if (save_num != common::ParticleData::num_particles || save_density != common::ParticleData::density ||
+                save_mass != common::ParticleData::mass || save_cutoff != common::ParticleData::cutoff) {
+                m_Changed = true;
+                spdlog::info("changed!");
+            }*/
+
+        }
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+        ImGui::End();
+    }
+
     void Gui::DrawStateButtons(Simulation::StateInfo& stateInfo, StableFluidsCuda::FluidData& data, int& n_per_side, float& squareScale, float& spacing)
     {
         ImGui::Begin("Particle Simulation");
