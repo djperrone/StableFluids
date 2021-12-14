@@ -10,7 +10,6 @@
 
 namespace Simulation {
 
-
 	StableFluidsGPU::StableFluidsGPU()
 	{
 		m_Window = Novaura::InputHandler::GetCurrentWindow();
@@ -29,7 +28,6 @@ namespace Simulation {
 		m_InputController = Novaura::InputHandler::CreateNewInputController();
 		Novaura::InputHandler::SetCurrentController(m_InputController);
 		OnEnter();
-
 	}
 
 	void StableFluidsGPU::OnEnter()
@@ -41,16 +39,10 @@ namespace Simulation {
 		StableFluidsCuda::FluidSquareAddDensity(&sq, m_AddPos.x, m_AddPos.y, m_Add.z);
 		StableFluidsCuda::FluidSquareAddVelocity(&sq, m_AddPos.x, m_AddPos.y, m_Add.x, m_Add.y);
 
-		//StableFluidsCuda::FluidSquareAddDensity(&sq, n_per_side / 2, n_per_side / 2, 50);
-		//StableFluidsCuda::FluidSquareAddVelocity(&sq, n_per_side / 2, n_per_side / 2, 3, 3);
-
-
-		
 		m_PreviousTime = glfwGetTime();
 		m_StateInfo.PAUSE = true;
 		m_StateInfo.PLAY = false;
 		m_StateInfo.RESET = false;
-
 
 		float width = Novaura::InputHandler::GetCurrentWindow()->Width;
 		float height = Novaura::InputHandler::GetCurrentWindow()->Height;
@@ -75,8 +67,7 @@ namespace Simulation {
 
 		free(m_Locations);
 
-		Novaura::Renderer::InitInstancedSquares(n_per_side * n_per_side, squareScale, m_Locations_gpu, sq.density, backgroundColor, colorMask);
-		//Novaura::Renderer::UpdateLocationMatrices(m_Locations_gpu, squareScale, n_per_side * n_per_side);
+		Novaura::Renderer::InitInstancedSquares(n_per_side * n_per_side, squareScale, m_Locations_gpu, sq.density, backgroundColor, colorMask);		
 		cudaFree(m_Locations_gpu);
 	}
 
@@ -93,30 +84,13 @@ namespace Simulation {
 		}
 		m_CameraController->Update(*Novaura::InputHandler::GetCurrentWindow(), deltaTime);
 		if (!m_StateInfo.PAUSE)
-		{
-		
+		{		
 			StableFluidsCuda::FluidSquareStep(&sq);
 
-			Novaura::Renderer::UpdateInstancedColors(backgroundColor, colorMask, sq.density, n_per_side * n_per_side);			
-
-			double currentTime = glfwGetTime();
-			//if (currentTime - m_PreviousTime >0.05)
-			//if(Novaura::InputHandler::IsPressed(GLFW_KEY_SPACE))
+			Novaura::Renderer::UpdateInstancedColors(backgroundColor, colorMask, sq.density, n_per_side * n_per_side);					
+			
 			if(addForce)
-			{
-				m_PreviousTime = currentTime;
-				////m_Add.x = (10 + glm::sin(glfwGetTime() * 2.0f) * 0.5f);
-				//m_Add.x == (10 + glm::sin(glfwGetTime() * 2.0f)) * 0.5f;// *Novaura::Random::Float(-0.2f, 0.2f);
-				//m_Add.y == glm::sin(glfwGetTime() / 2.0f) * 0.5f;
-
-				//m_Add.x = glm::cos(m_Angle.x);// *Novaura::Random::Float(-0.2f, 0.2f);
-				//m_Add.y = glm::sin(m_Angle.y);
-
-				//m_Add.y = glm::sin(glfwGetTime() / 2.0f) * 0.5f;
-				//m_Add.z = 5.0f;
-				//float addDensity = 5.0f;
-				//float addVelocityx = (10 + glm::sin(glfwGetTime() * 2.0f)) * 0.5f;// *Novaura::Random::Float(-0.2f, 0.2f);
-				//float addVelocityy = glm::sin(glfwGetTime() / 2.0f) * 0.5f;								
+			{		
 				
 				StableFluidsCuda::FluidSquareAddDensity(&sq, m_AddPos.x, m_AddPos.y, m_Add.z);
 				StableFluidsCuda::FluidSquareAddVelocity(&sq,m_AddPos.x, m_AddPos.y, m_Add.x, m_Add.y);
@@ -129,12 +103,7 @@ namespace Simulation {
 		Novaura::Renderer::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Novaura::Renderer::Clear();
 		Novaura::Renderer::BeginSceneInstanced(m_CameraController->GetCamera());
-		m_Gui->BeginFrame();
-
-		/*float width = Novaura::InputHandler::GetCurrentWindow()->Width;
-		float height = Novaura::InputHandler::GetCurrentWindow()->Height;
-		float aspectRatio = Novaura::InputHandler::GetCurrentWindow()->AspectRatio;	
-	*/
+		m_Gui->BeginFrame();		
 
 		Novaura::Renderer::EndInstancedSquares();
 		
@@ -143,12 +112,9 @@ namespace Simulation {
 		m_Gui->EndFrame();
 	}
 
-
-
 	void StableFluidsGPU::OnExit()
 	{		
-		StableFluidsCuda::FluidSquareFree(&sq);	
-		//cudaFree(m_Locations_gpu);
+		StableFluidsCuda::FluidSquareFree(&sq);			
 		Novaura::Renderer::ShutDownInstancedSquares();
 	}
 

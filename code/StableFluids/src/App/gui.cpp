@@ -310,8 +310,6 @@ namespace Pgui {
             }
         }
 
-
-
         if (ImGui::Button("RESET"))
         {
             stateInfo.RESET = !stateInfo.RESET;
@@ -343,12 +341,13 @@ namespace Pgui {
             bool xPosChanged = ImGui::InputInt("x pos", &addPos.x);
             bool yPosChanged = ImGui::InputInt("y pos", &addPos.y);
 
-          //  bool xVelChanged = ImGui::SliderFloat("x velocity", &addData.x, -50.0f, 50.0f);
+            bool xVelChanged = ImGui::SliderFloat("x velocity", &addData.x, -50.0f, 50.0f);
             bool yVelChanged = ImGui::SliderFloat("y velocity", &addData.y, -50.0f, 50.0f);
             bool densityChanged = ImGui::SliderFloat("density", &addData.z, 0.0f, 50.0f);
-            ImGui::SliderAngle("angle X", &addData.x, -360.0f, 360.0f);
-            ImGui::SliderAngle("angle Y",&addData.y, -360.0f, 360.0f);
+            //ImGui::SliderAngle("angle X", &addData.x, -360.0f, 360.0f);
+           // ImGui::SliderAngle("angle Y",&addData.y, -360.0f, 360.0f);
 
+            ImGui::ColorEdit4("background color", backgroundColor.vec);
             if (ImGui::Button("Add force"))
             {
                 addForce = !addForce;
@@ -356,62 +355,10 @@ namespace Pgui {
 
             
 
-            /*if(ImGui::IsKeyPressed(GLFW_KEY_A))
-            {
-                addPos.x -= 0.1f;
-            }
-            if (ImGui::IsKeyPressed(GLFW_KEY_D))
-            {
-                addPos.x += 0.1f;
-            }
-            if (ImGui::IsKeyPressed(GLFW_KEY_S))
-            {
-                addPos.y -= 0.1f;
-            }
-            if (ImGui::IsKeyPressed(GLFW_KEY_W))
-            {
-                addPos.y += 0.1f;
-            }
+            ImVec4 tempColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);         
 
-            if (xPosChanged || yPosChanged)
-            {
-                addPos.x >= n_per_side ? addPos.x = n_per_side - 1 : addPos.x;
-                addPos.y >= n_per_side ? addPos.y = n_per_side - 1 : addPos.y;
-            }*/
-            ImVec4 tempColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
-            /* if (maskrChanged)
-             {
-                 colorMask.x *= -1.0f;
-
-             }
-             if (maskgChanged)
-             {
-                 colorMask.y *= -1.0f;
-             }
-             if (maskbChanged)
-             {
-
-                 colorMask.z *= -1.0f;
-             }*/
-
-             //  ImGui::ColorButton("background color", tempColor);
-            ImGui::ColorEdit4("background color", backgroundColor.vec);
-            // ImGui::ColorEdit3("color", colorMask.vec);
-           //  ImGui::("color2", ImVec2(2, 1));
-
-            /* colorMask.x =(float)glm::clamp(r,-1,1);
-             colorMask.y =(float)glm::clamp(g, -1, 1);
-             colorMask.z =(float)glm::clamp(b, -1, 1);*/
-             //bool stateChanged = scaleChanged | spacingChanged | sizeChanged;
+      
             bool stateChanged = sizeChanged;
-
-
-            /*if (save_num != common::ParticleData::num_particles || save_density != common::ParticleData::density ||
-                save_mass != common::ParticleData::mass || save_cutoff != common::ParticleData::cutoff) {
-                m_Changed = true;
-                spdlog::info("changed!");
-            }*/
-
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

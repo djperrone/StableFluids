@@ -504,9 +504,7 @@ namespace Novaura {
 			2,3,0
 		};
 
-		glBindVertexArray(s_RenderData.sphereVAO);
-
-		
+		glBindVertexArray(s_RenderData.sphereVAO);		
 
 		std::vector<CudaMath::Vector4f> vertices;
 		vertices.reserve(4);
@@ -531,7 +529,6 @@ namespace Novaura {
 		//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(InstancedInteropVertexData), (void*)(sizeof(CudaMath::Vector4f)));
 
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_RenderData.ebo);
-
 		
 
 		CudaMath::Vector4f* colors = new CudaMath::Vector4f[amount];
@@ -547,7 +544,6 @@ namespace Novaura {
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(CudaMath::Vector4f), (void*)(0));
 		glVertexAttribDivisor(1, 1);
-
 
 		delete[] colors;
 
@@ -591,7 +587,6 @@ namespace Novaura {
 
 		cudaGraphicsGLRegisterBuffer(&s_RenderData.CudaGraphicsResource, s_RenderData.colorVBO, cudaGraphicsRegisterFlagsWriteDiscard);
 		UpdateInstancedColors(backgroundColor, colorMask, densityVals, amount);
-
 	}
 
 	void Renderer::UpdateLocationMatrices(CudaMath::Vector3f* locations, float scale, int n)
@@ -634,10 +629,5 @@ namespace Novaura {
 
 		CudaMath::UpdateColors_cpu(backgroundColor, colorMask, densityVals, resultColors, n);
 		cudaGraphicsUnmapResources(1, &s_RenderData.CudaGraphicsResource, 0);
-	}
-
-
-	
-	
-	
+	}	
 }
