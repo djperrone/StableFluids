@@ -36,6 +36,14 @@ namespace Novaura{
 		CudaMath::Vector4f Color;
 	};
 
+	struct InstancedInteropVertexData
+	{
+		InstancedInteropVertexData(const CudaMath::Vector4f& position)
+			: Position(position){}
+
+		CudaMath::Vector4f Position;		
+	};
+
 
 }
 

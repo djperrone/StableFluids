@@ -4,6 +4,7 @@
 layout(location = 0) in vec4 aPos;
 layout(location = 1) in vec4 aColor;
 layout(location = 2) in mat4 instanceMatrix;
+//layout(location = 6) in vec4 color;
 
 out vec4 v_Pos;
 out vec4 v_Color;

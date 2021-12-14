@@ -60,7 +60,8 @@ namespace Novaura {
 		const unsigned int InstancedIndexCount = 6;
 		unsigned int CircleCounter = 0;
 
-		GLuint instanceVBO;	
+		GLuint instanceVBO;
+		GLuint colorVBO;
 		unsigned int sphereVAO;
 		unsigned int vbo, ebo;
 	};	
@@ -123,6 +124,7 @@ namespace Novaura {
 		glGenBuffers(1, &s_RenderData.vbo);
 		glGenBuffers(1, &s_RenderData.ebo);
 		glGenBuffers(1, &s_RenderData.instanceVBO);
+		glGenBuffers(1, &s_RenderData.colorVBO);
 
 	}
 
@@ -502,27 +504,51 @@ namespace Novaura {
 			2,3,0
 		};
 
-		std::vector<InstancedVertexData> vertices;
+		glBindVertexArray(s_RenderData.sphereVAO);
+
+		
+
+		std::vector<CudaMath::Vector4f> vertices;
 		vertices.reserve(4);
 		//CudaMath::Vector4f color{ 0.8f,0.2f,0.2f,1.0f };
-		vertices.emplace_back(CudaMath::Vector4f{ -0.5f, -0.5f, 0.0f, scale }, color);
-		vertices.emplace_back(CudaMath::Vector4f{ 0.5f, -0.5f, 0.0f, scale }, color);
-		vertices.emplace_back(CudaMath::Vector4f{ 0.5f,  0.5f, 0.0f, scale }, color);
-		vertices.emplace_back(CudaMath::Vector4f{ -0.5f,  0.5f, 0.0f, scale }, color);
+		vertices.emplace_back(CudaMath::Vector4f{ -0.5f, -0.5f, 0.0f, scale });
+		vertices.emplace_back(CudaMath::Vector4f{ 0.5f, -0.5f, 0.0f, scale });
+		vertices.emplace_back(CudaMath::Vector4f{ 0.5f,  0.5f, 0.0f, scale });
+		vertices.emplace_back(CudaMath::Vector4f{ -0.5f,  0.5f, 0.0f, scale });
 
-		glBindVertexArray(s_RenderData.sphereVAO);
 		s_RenderData.MaxCircles = amount;
 
-		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.vbo);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(InstancedVertexData), &vertices[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_RenderData.ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
+		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.vbo);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CudaMath::Vector4f) * 2, &vertices[0], GL_STATIC_DRAW);
+		
+
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(InstancedVertexData), (void*)0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(CudaMath::Vector4f), (void*)0);
+		//glEnableVertexAttribArray(1);
+		//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(InstancedInteropVertexData), (void*)(sizeof(CudaMath::Vector4f)));
+
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_RenderData.ebo);
+
+		
+
+		CudaMath::Vector4f* colors = new CudaMath::Vector4f[amount];
+
+		for (int i = 0; i < amount; i++)
+		{
+			colors[i] = { 1.0f,0.3f,0.3f,1.0f };
+		}
+		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.colorVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(CudaMath::Vector4f) * amount, &colors[0], GL_DYNAMIC_DRAW);
+
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(InstancedVertexData), (void*)offsetof(InstancedVertexData, Color));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_RenderData.ebo);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(CudaMath::Vector4f), (void*)(0));
+		glVertexAttribDivisor(1, 1);
+
+
+		delete[] colors;
 
 		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(CudaMath::Matrix44f) * amount, 0, GL_DYNAMIC_DRAW);
@@ -545,6 +571,10 @@ namespace Novaura {
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 
 		CudaMath::Matrix44f scaleMatrix;
 
@@ -574,9 +604,9 @@ namespace Novaura {
 	void Renderer::EndInstancedSquares()
 	{
 		glBindVertexArray(s_RenderData.sphereVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.instanceVBO);
+		//glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.instanceVBO);
+		//glBindBuffer(GL_ARRAY_BUFFER, s_RenderData.colorVBO);
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, s_RenderData.MaxCircles);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	void Renderer::ShutDownInstancedSquares()
