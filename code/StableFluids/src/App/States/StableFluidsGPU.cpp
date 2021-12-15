@@ -3,7 +3,6 @@
 
 #include "Novaura/Novaura.h"
 #include "Novaura/Collision/Collision.h"
-
 #include "Novaura/Core/Application.h"
 
 #include "Novaura/Random.h"
@@ -90,8 +89,7 @@ namespace Simulation {
 			Novaura::Renderer::UpdateInstancedColors(backgroundColor, colorMask, sq.density, n_per_side * n_per_side);					
 			
 			if(addForce)
-			{		
-				
+			{						
 				StableFluidsCuda::FluidSquareAddDensity(&sq, m_AddPos.x, m_AddPos.y, m_Add.z);
 				StableFluidsCuda::FluidSquareAddVelocity(&sq,m_AddPos.x, m_AddPos.y, m_Add.x, m_Add.y);
 			}							

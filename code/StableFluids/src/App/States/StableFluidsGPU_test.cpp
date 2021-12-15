@@ -195,7 +195,7 @@ namespace Simulation {
 	void StableFluidsGPU_test::OnExit()
 	{
 		timer.Flush();
-		cudaTimer.Flush();
+		//cudaTimer.Flush();
 		StableFluidsCuda::FluidSquareFree(&sq);
 		StableFluidsCuda::FluidSquareFree_cpu(&sq_cpu);
 		StableFluids::FluidSquareFree(sq_test);

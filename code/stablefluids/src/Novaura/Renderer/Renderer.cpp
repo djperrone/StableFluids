@@ -125,7 +125,6 @@ namespace Novaura {
 		glGenBuffers(1, &s_RenderData.ebo);
 		glGenBuffers(1, &s_RenderData.instanceVBO);
 		glGenBuffers(1, &s_RenderData.colorVBO);
-
 	}
 
 	void Renderer::Init(const Camera& camera)
@@ -248,7 +247,6 @@ namespace Novaura {
 			* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f))
 			* glm::scale(glm::mat4(1.0f), scale);
 
-
 		vertices.emplace_back(transform * s_RenderData.DefaultRectangleVertices[0], color, s_RenderData.DefaultTextureCoords[0]);
 		vertices.emplace_back(transform * s_RenderData.DefaultRectangleVertices[1], color, s_RenderData.DefaultTextureCoords[1]);
 		vertices.emplace_back(transform * s_RenderData.DefaultRectangleVertices[2], color, s_RenderData.DefaultTextureCoords[2]);
@@ -277,7 +275,6 @@ namespace Novaura {
 		Texture tex = TextureLoader::LoadTexture(texture);
 		s_RenderData.TextureShader->SetUniform2f("u_Quantity", quantity.x, quantity.y);
 
-
 		tex.Bind();
 
 		std::vector<VertexData> vertices;
@@ -305,12 +302,7 @@ namespace Novaura {
 		//shader.SetUniform4f("u_Color", m_Color);
 		glDrawElements(GL_TRIANGLES, s_RenderData.s_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 		tex.UnBind();
-	}
-
-	
-
-
-	
+	}	
 
 	void Renderer::InitInstancedCircles_glm(unsigned int amount, float scale, const glm::vec4& color)
 	{
