@@ -1,10 +1,19 @@
 # StableFluids
 
+Implementing Jos Stam's stable fluids algorithm in parallel on Cuda and rendering it using Cuda-OpenGL interop
+
+
 ### PC Requirements
 - Windows 10
 - Nvidia Graphics Card
 - Nvidia Cuda Toolkit
 - Visual Studio 2019
+
+### Project Structure
+- Rendering, camera, opengl context and input are handled in the novaura folder
+- Fluid Simulation Code is in the App folder
+- App/States/StableFluidsGPU.cpp is the main source file for the demo
+- Novaura/Renderer/Renderer.cpp handles cuda opengl interop and instanced rendering
 
 ### How to use the demo
 - arrow keys to move camera
