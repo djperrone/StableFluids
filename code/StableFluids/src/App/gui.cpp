@@ -355,7 +355,7 @@ namespace Pgui {
 
             
 
-            ImVec4 tempColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);         
+           /* ImVec4 tempColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);         */
 
       
             bool stateChanged = sizeChanged;

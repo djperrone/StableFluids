@@ -10,7 +10,7 @@
 #include "CudaSrc/Fluid.cuh"
 
 #include "Benchmark/timer.h"
-#include "Benchmark/CudaTimer.cuh"
+
 
 namespace Simulation {
 
@@ -60,6 +60,6 @@ namespace Simulation {
 
 		void CompareResults();
 		Timer timer;
-		CudaTimer cudaTimer;
+		
 	};
 }

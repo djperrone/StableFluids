@@ -55,9 +55,8 @@ namespace Simulation {
 			{				
 				float scale = n / 50;
 				float x = i * spacing / width;
-				float y = j * spacing / width;
+				float y = j * spacing / width;				
 				
-				int N = n_per_side;
 				m_Locations[i + j * n_per_side] = { x - 1.5f,y - 1.5f,0 };				
 			}
 		}
@@ -105,7 +104,7 @@ namespace Simulation {
 
 		Novaura::Renderer::EndInstancedSquares();
 		
-		m_Gui->DrawStateButtons(m_StateInfo,sq.data, n_per_side, squareScale, spacing,m_AddPos, m_Add, backgroundColor, colorMask, addForce);
+		m_Gui->DrawStateButtons(m_StateInfo,sq.data, n_per_side, squareScale, spacing, m_AddPos, m_Add, backgroundColor, colorMask, addForce);
 
 		m_Gui->EndFrame();
 	}

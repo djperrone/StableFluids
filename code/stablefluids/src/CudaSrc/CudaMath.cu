@@ -53,7 +53,7 @@ namespace CudaMath {
 
 		//float r, g, b;
 
-		float color = 1.0f - (d > 1.0f ? 1.0f : d);	
+		//float color = 1.0f - (d > 1.0f ? 1.0f : d);	
 		Vector4f outColor = { backgroundColor.x - d * colorMask.x, backgroundColor.y - d * colorMask.y, backgroundColor.z - d * colorMask.z, 1.0f };		
 
 		outColors[tid] = outColor;

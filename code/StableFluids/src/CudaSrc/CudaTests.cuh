@@ -1,5 +1,5 @@
-#include "../CUDA_KERNEL.h"
-#include "../CudaMath.cuh"
+#include "CUDA_KERNEL.h"
+#include "CudaMath.cuh"
 
 namespace CudaMathTest {
 
