@@ -40,5 +40,6 @@ Implementing Jos Stam's stable fluids algorithm in parallel on Cuda and renderin
 ### Sources
 - Project structure based on Cherno's OpenGL and Hazel series
 - Rendering code based on LearnOpenGL.com's instanced rendering chapter
+- Interop source: https://www.nvidia.com/content/GTC/documents/1055_GTC09.pdf
 - Jos Stam: https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf
 - Mike Ash: https://mikeash.com/pyblog/fluid-simulation-for-dummies.html
