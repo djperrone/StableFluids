@@ -1,6 +1,6 @@
 # StableFluids
 
-Implementing Jos Stam's stable fluids algorithm in parallel on Cuda and rendering it using Cuda-OpenGL interop
+Implementing Jos Stam's stable fluids algorithm in parallel on Cuda and rendering it using Cuda-OpenGL interop for our final project in CSC 415 (parallel computing)
 #### By David Perrone and Jake Afonso
 
 ### Project Structure
