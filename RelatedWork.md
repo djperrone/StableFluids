@@ -13,3 +13,9 @@
   - https://www.sciencedirect.com/science/article/abs/pii/S0010465520303210
 - Linear Solvers for Stable Fluids: GPU vs CPU
   -  https://www3.nd.edu/~zxu2/acms60212-40212-S12/final_project/Linear_solvers_GPU.pdf
+- Particle-Based Fluid Simulation for Interactive Applications
+  - https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.121.844&rep=rep1&type=pdf
+- Real-Time 3D Fluid Simulation on GPU with Complex Obstacles 
+  - https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.456.3824&rep=rep1&type=pdf
+- Real-Time Fluid Simulation in a Dynamic Virtual Environment
+  - https://www.researchgate.net/profile/Charles-Hughes-8/publication/3208602_Real-time_fluid_simulation_in_a_dynamic_virtual_environment/links/0fcfd50c0188fe758d000000/Real-time-fluid-simulation-in-a-dynamic-virtual-environment.pdf
