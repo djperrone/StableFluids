@@ -1,5 +1,7 @@
 # StableFluids
-
+<p align="center">
+<img src="https://github.com/djperrone/ParticleSimulation2D/blob/main/title_img/title_image.JPG"/>
+</p>
 Implementing Jos Stam's stable fluids algorithm in parallel on Cuda and rendering it using Cuda-OpenGL interop for our final project in CSC 415 (parallel computing)
 #### By David Perrone and Jake Afonso
 
