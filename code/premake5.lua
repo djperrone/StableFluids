@@ -32,7 +32,7 @@ project "StableFluids"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "on"
-	buildcustomizations "BuildCustomizations/CUDA 11.5"
+	buildcustomizations "BuildCustomizations/CUDA 12.1"
 	
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")

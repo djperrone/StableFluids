@@ -14,7 +14,7 @@
 
 #include "Novaura/Renderer/VertexBuffer.h"
 
-#include "Novaura/CudaGLInterop/Interop.h"
+//#include "Novaura/CudaGLInterop/Interop.h"
 
 
 

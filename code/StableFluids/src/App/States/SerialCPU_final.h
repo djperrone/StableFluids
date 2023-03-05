@@ -7,8 +7,8 @@
 
 #include "../gui.h"
 
-#include "FinalCode/fluid.h"
-#include "FinalCode/utilities.h"
+#include "SerialCode/fluid.h"
+#include "SerialCode/utilities.h"
 
 namespace Simulation {
 

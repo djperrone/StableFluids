@@ -4,8 +4,8 @@
 //#include "Novaura/Primitives/Rectangle.h"
 #include "StateInfo.h"
 #include "../gui.h"
-#include "FinalCode/fluid.h"
-#include "FinalCode/utilities.h"
+#include "SerialCode/fluid.h"
+#include "SerialCode/utilities.h"
 
 #include "CudaSrc/Fluid.cuh"
 

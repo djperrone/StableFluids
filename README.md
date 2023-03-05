@@ -21,13 +21,13 @@ Implementing Jos Stam's stable fluids algorithm in parallel on Cuda and renderin
 ### PC Requirements
 - Windows 10
 - Nvidia Graphics Card (tested with gtx 960 and 970 - results may vary on lower graphics cards)
-- Nvidia Cuda Toolkit
+- Nvidia Cuda Toolkit 12.1
 - Visual Studio 2019
 
 ### How to run
-- git clone
+- git clone (must use git command line for submodules to work)
 - git submodule update --init --recursive
-- Run the GenerateProjects batch file
+- Run the GenerateProjects batch file located in Code folder
 - Open the project and manually include cu and cuh files in the project
 - F5 to run (Release mode recommended)
 
