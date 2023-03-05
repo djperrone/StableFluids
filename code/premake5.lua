@@ -4,7 +4,6 @@ workspace "StableFluids"
 
 	configurations
 	{
-		"Debug",
 		"Release"
 	}
 
